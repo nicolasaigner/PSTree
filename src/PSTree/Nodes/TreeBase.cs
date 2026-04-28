@@ -27,10 +27,15 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
     public int Depth { get; } = depth;
 
     bool ITree.IsContainer { get => IsContainer; }
-    ITree? ITree.Container { get => Container; }
+
     string ITree.Source { get => Source; }
-    string? ITree.Hierarchy { get => Hierarchy; set => Hierarchy = value; }
-    int ITree.Depth { get => Depth; }
+
+    string? ITree.Hierarchy
+    {
+        get => Hierarchy;
+        set => Hierarchy = value;
+    }
+
     string ITree.Name { get => Name; }
 
     private bool IsLast()
