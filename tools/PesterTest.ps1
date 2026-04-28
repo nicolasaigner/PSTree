@@ -25,6 +25,7 @@ Get-ChildItem ([IO.Path]::Combine($PSScriptRoot, 'Modules')) -Directory |
 
 $configuration = [PesterConfiguration]::Default
 $configuration.Output.Verbosity = 'Detailed'
+$configuration.Output.StackTraceVerbosity = 'Full'
 $configuration.Run.Path = $TestPath
 $configuration.Run.Throw = $true
 $configuration.TestResult.Enabled = $true
