@@ -8,8 +8,6 @@ namespace PSTree.Extensions;
 
 internal static class ExceptionExtensions
 {
-    // private static readonly bool s_isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
     extension(ProviderInfo provider)
     {
         internal ErrorRecord ToInvalidProviderError(string path, string expected = "FileSystem")
@@ -61,18 +59,4 @@ internal static class ExceptionExtensions
         internal ErrorRecord ToSecurityError(string path)
             => new(exception, "SecurityException", ErrorCategory.OpenError, path);
     }
-
-    // extension(PSCmdlet cmdlet)
-    // {
-    //     internal void ThrowIfNotSupportedPlatform()
-    //     {
-    //         if (s_isWindows) return;
-
-    //         PlatformNotSupportedException exception = new(
-    //             "The 'Get-PSTreeRegistry' cmdlet is only supported on Windows.");
-
-    //         cmdlet.ThrowTerminatingError(new ErrorRecord(
-    //             exception, "NotSupportedPlatform", ErrorCategory.InvalidOperation, null));
-    //     }
-    // }
 }
