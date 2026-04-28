@@ -11,6 +11,7 @@ public enum FileSystemSortMode
     None
 }
 
+#if WINDOWS
 public enum RegistrySortMode
 {
     ValuesFirst,  // Default: Values first, then keys (both by name)
@@ -18,4 +19,4 @@ public enum RegistrySortMode
     Name,         // Keys and values mixed, sorted by name
     None
 }
-
+#endif

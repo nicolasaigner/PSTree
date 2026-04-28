@@ -130,7 +130,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
             $key.ValueCount | Should -Not -BeNullOrEmpty
             $key.View | Should -BeOfType ([RegistryView])
             $key.PSParentPath | Should -BeOfType ([string])
-            $key.Path | Should -BeExactly $key.PSPath.Split('::')[1]
+            $key.Path | Should -BeExactly $key.PSPath.Split([string[]] '::', 0)[1] # windows pwsh BS
             $key.Hierarchy | Should -Not -BeNullOrEmpty
             $key.Depth | Should -BeGreaterOrEqual 0
             $key.LastWriteTime | Should -BeOfType ([datetime])
@@ -145,7 +145,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
             $value.Name | Should -Not -BeNullOrEmpty
             $value.PSPath | Should -Not -BeNullOrEmpty
             $value.PSParentPath | Should -Not -BeNullOrEmpty
-            $value.Path | Should -BeExactly "$($value.PSParentPath.Split('::')[1]):$($value.Name)"
+            $value.Path | Should -BeExactly "$($value.PSParentPath.Split([string[]] '::', 1)[1]):$($value.Name)"
             $value.Hierarchy | Should -Not -BeNullOrEmpty
             $value.Depth | Should -BeGreaterOrEqual 0
         }

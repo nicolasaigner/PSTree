@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using PSTree.Comparers.FileSystem;
-using PSTree.Comparers.Registry;
 using PSTree.Nodes;
+#if WINDOWS
+using PSTree.Comparers.Registry;
+#endif
 
 namespace PSTree.Comparers;
 

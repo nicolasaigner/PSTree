@@ -1,22 +1,19 @@
+#if WINDOWS
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Security;
 using Microsoft.Win32;
 using PSTree.Comparers;
 using PSTree.Extensions;
 using PSTree.Nodes;
-using PSTree.Registry;
 using IOPath = System.IO.Path;
+using PSTree.Registry;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PSTree.Commands;
 
 [Cmdlet(VerbsCommon.Get, "PSTreeRegistry", DefaultParameterSetName = PathSet)]
-#if WINDOWS
 [OutputType(typeof(TreeRegistryKey), typeof(TreeRegistryValue))]
-#else
-[ExcludeFromCodeCoverage]
-#endif
 [Alias("pstreereg")]
 public sealed class GetPSTreeRegistryCommand
     : TreeCommandBase<TreeRegistryKey, TreeRegistryBase, RegistrySortMode>
@@ -25,13 +22,6 @@ public sealed class GetPSTreeRegistryCommand
     [Alias("k", "key")]
     public SwitchParameter KeysOnly { get; set; }
 
-    protected override void BeginProcessing()
-    {
-        this.ThrowIfNotSupportedPlatform();
-        base.BeginProcessing();
-    }
-
-#if WINDOWS
     protected override void ProcessRecord()
     {
         foreach ((ProviderInfo provider, string path) in EnumerateResolvedPaths())
@@ -124,5 +114,5 @@ public sealed class GetPSTreeRegistryCommand
 
     protected override IComparer<TreeRegistryBase>? GetComparer()
         => TreeComparerFactory.Get(SortBy);
-#endif
 }
+#endif

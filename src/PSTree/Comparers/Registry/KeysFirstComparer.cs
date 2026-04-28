@@ -1,5 +1,4 @@
 #if WINDOWS
-using System;
 using System.Collections.Generic;
 using PSTree.Nodes;
 

@@ -6,6 +6,7 @@
   - Registry values now include the value name in the `Path` property using colon (`:`) separator:
     - Keys: `HKEY_CURRENT_USER\Environment`
     - Values: `HKEY_CURRENT_USER\Environment:TEMP`
+  - 
 
 - __09/25/2025__
   - Adds `LastWriteTime` Property to `TreeRegistryKey` class.
