@@ -26,17 +26,7 @@ internal static class MiscExtensions
     {
         internal string GetName() => Path.GetFileName(registryKey.Name);
 
-        internal string? GetParent()
-        {
-#if NET8_0_OR_GREATER
-            return Path.GetDirectoryName(registryKey.Name);
-#else
-            string path = registryKey.Name;
-            int idx = path.LastIndexOf('\\');
-            if (idx == -1) return null;
-            return path.Substring(0, idx);
-#endif
-        }
+        internal string? GetParent() => Path.GetDirectoryName(registryKey.Name);
     }
 
     extension(TreeRegistryKey treeKey)

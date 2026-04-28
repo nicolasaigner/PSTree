@@ -165,9 +165,15 @@ Describe 'Get-PSTreeRegistry.Windows' {
                 Start-Sleep 1
                 $ps.Stop()
                 try { $ps.EndInvoke($task) }
-                catch { }
+                catch [System.Management.Automation.PipelineStoppedException] { } # expected
                 finally { $ps.Dispose() }
             } | Should -BeLessThan ([timespan] '00:00:05')
+        }
+    }
+
+    It 'Can sort output' {
+        [PSTree.Comparers.RegistrySortMode].GetEnumNames() | ForEach-Object {
+            Get-PSTreeRegistry HKCU:\ -SortBy $_ -Depth 1 | Should -Not -BeNullOrEmpty
         }
     }
 }
