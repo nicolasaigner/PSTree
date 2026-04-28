@@ -49,8 +49,14 @@ public sealed class TreeRegistryKey : TreeRegistryBase, IDisposable
         ValueCount = key.ValueCount;
         View = key.View;
         LastWriteTime = key.GetLastWriteTime();
-        PSParentPath = $"{ProviderPath}{key.GetParent()}";
+        PSParentPath = GetPSParentPath(key);
         PSPath = $"{ProviderPath}{key.Name}";
+    }
+
+    private string GetPSParentPath(RegistryKey key)
+    {
+        string? parent = key.GetParent();
+        return parent is not null ? $"{ProviderPath}{parent}" : string.Empty;
     }
 
     internal string[] GetValueNames() => _key.GetValueNames();
