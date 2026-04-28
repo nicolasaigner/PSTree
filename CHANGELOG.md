@@ -121,7 +121,7 @@
   - Added properties `ItemCount` and `TotalItemCount` to `PSTreeDirectory` instances, requested in [__Issue #34__][21].
 
     ```powershell
-    PS ..\PSTree> pstree -Recurse -Force -Directory | Select-Object Hierarchy, Depth, ItemCount, TotalItemCount -First 15
+    PS \> pstree -Recurse -Force -Directory | Select-Object Hierarchy, Depth, ItemCount, TotalItemCount -First 15
 
     Hierarchy                  Depth ItemCount TotalItemCount
     ---------                  ----- --------- --------------
@@ -141,15 +141,15 @@
     │   │   ├── 03                 3         4              4
     │   │   ├── 04                 3         2              2
 
-    PS ..\PSTree> (Get-ChildItem -Force).Count
+    PS \> (Get-ChildItem -Force).Count
     15
-    PS ..\PSTree> (Get-ChildItem -Force -Recurse).Count
+    PS \> (Get-ChildItem -Force -Recurse).Count
     1476
-    PS ..\PSTree> (Get-ChildItem .git -Force).Count
+    PS \> (Get-ChildItem .git -Force).Count
     13
-    PS ..\PSTree> (Get-ChildItem .git -Force -Recurse).Count
+    PS \> (Get-ChildItem .git -Force -Recurse).Count
     1078
-    PS ..\PSTree>
+    PS \>
     ```
 
 - __08/29/2024__
@@ -158,7 +158,7 @@
     - PSTree v2.1.16
 
       ```powershell
-      PS ..\PSTree> pstree -Directory -Depth 2
+      PS \> pstree -Directory -Depth 2
 
         Source: D:\...\PSTree
 
@@ -185,7 +185,7 @@
     - PSTree v2.1.17
 
       ```powershell
-      PS ..\PSTree> pstree -Directory -Depth 2
+      PS \> pstree -Directory -Depth 2
 
         Source: D:\...\PSTree
 
@@ -213,7 +213,7 @@
   - Added method `.GetFormattedLength()`. Outputs the friendly `.Length` representation of `PSTreeFile` and `PSTreeDirectory` instances.
 
     ```powershell
-    PS ..\PSTree> (Get-PSTree D:\ -RecursiveSize -Depth 0).GetFormattedLength()
+    PS \> (Get-PSTree D:\ -RecursiveSize -Depth 0).GetFormattedLength()
     629.59 GB
     ```
 
@@ -253,7 +253,7 @@
   - Added `GroupBy` tag to the default view, now trees are grouped by the source Path omg! Little example:
 
     ```powershell
-    PS ..\PSTree> Get-PSTree .\src\, .\module\ -Exclude *\obj,*\bin
+    PS \> Get-PSTree .\src\, .\module\ -Exclude *\obj,*\bin
 
       Source: C:\path\to\PSTree\src
 
@@ -298,7 +298,7 @@
   This parameter allows to calculate the recursive size of folders in the hierarchy, similar to how explorer does it. __It's important to note that this is a more expensive operation__, in order to calculate the recursive size, all folders in the hierarchy need to be traversed.
 
 ```powershell
-PS ..\PSTree> pstree -Directory -Depth 2
+PS \> pstree -Directory -Depth 2
 
 Mode  Hierarchy          Size
 ----  ---------          ----
@@ -308,7 +308,7 @@ d----     ├── public   4.8 Kb
 d----     ├── private 0 Bytes
 d----     └── Format  1.83 Kb
 
-PS ..\PSTree> pstree -Directory -Depth 2 -RecursiveSize
+PS \> pstree -Directory -Depth 2 -RecursiveSize
 
 Mode  Hierarchy            Size
 ----  ---------            ----
@@ -328,7 +328,7 @@ d----     └── Format    1.83 Kb
   - `PSTreeDirectory` and `PSTreeFile` instances now only include 2 visible properties, `Hierarchy` and `Length`, the rest is done with format view.
 
 ```powershell
-PS ..\PSTree> pstree -Recurse
+PS \> pstree -Recurse
 
 Mode  Hierarchy                             Size
 ----  ---------                             ----

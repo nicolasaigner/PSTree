@@ -52,7 +52,7 @@ The `Get-PSTree` cmdlet offers a tree-style visualization of a folder's contents
 ### Example 1: Get the current Directory Tree with Default Parameters
 
 ```powershell
-PS ..\PSTree> Get-PSTree
+PS \> Get-PSTree
 ```
 
 This example retrieves the directory and file structure of the current directory, using the default parameters: __a depth of 3 levels__ and no recursive traversal beyond that limit. It displays both directories and files, including their sizes, but does not include hidden or system items unless explicitly requested through other means.
@@ -60,7 +60,7 @@ This example retrieves the directory and file structure of the current directory
 ### Example 2: Display the `$HOME` Directory Tree Recursively, Showing Only Directories
 
 ```powershell
-PS ..\PSTree> Get-PSTree $HOME -Directory -Recurse
+PS \> Get-PSTree $HOME -Directory -Recurse
 ```
 
 This example retrieves the complete directory hierarchy under the `$HOME` path, traversing all subfolders recursively and displaying only directories (excluding files).
@@ -68,7 +68,7 @@ This example retrieves the complete directory hierarchy under the `$HOME` path, 
 ### Example 3: Display the `$HOME` Directory Tree, Limited to 2 Levels, Including Hidden Items
 
 ```powershell
-PS ..\PSTree> Get-PSTree $HOME -Depth 2 -Force
+PS \> Get-PSTree $HOME -Depth 2 -Force
 ```
 
 > [!TIP]
@@ -77,7 +77,7 @@ PS ..\PSTree> Get-PSTree $HOME -Depth 2 -Force
 ### Example 4: Display the `C:\` Drive Tree, Limited to 2 Levels, Showing Only Directories with Recursive Sizes
 
 ```powershell
-PS ..\PSTree> Get-PSTree C:\ -Depth 2 -RecursiveSize -Directory
+PS \> Get-PSTree C:\ -Depth 2 -RecursiveSize -Directory
 ```
 
 This example retrieves the directory structure under the `C:\` drive, limited to 2 levels of depth, displaying only directories (excluding files) and calculating their recursive sizes. It provides a controlled view for analyzing disk usage, summing the sizes of all files within each directory and its subdirectories.
@@ -85,7 +85,7 @@ This example retrieves the directory structure under the `C:\` drive, limited to
 ### Example 5: Display the `$HOME` Directory Tree Recursively, Excluding `.jpg` and `.png` Files
 
 ```powershell
-PS ..\PSTree> Get-PSTree $HOME -Recurse -Exclude *.jpg, *.png
+PS \> Get-PSTree $HOME -Recurse -Exclude *.jpg, *.png
 ```
 
 > [!NOTE]
@@ -98,7 +98,7 @@ This example retrieves the complete directory and file hierarchy under the `$HOM
 ### Example 6: Display the Tree of All Directories in the Current Location
 
 ```powershell
-PS ..\PSTree> Get-ChildItem -Directory | Get-PSTree
+PS \> Get-ChildItem -Directory | Get-PSTree
 ```
 
 > [!TIP]
@@ -109,7 +109,7 @@ This example pipes the output of `Get-ChildItem` to `Get-PSTree`, retrieving the
 ### Example 7: Display the Tree of All Directories in the Current Location, Including Only `.ps1` Files
 
 ```powershell
-PS ..\PSTree> Get-ChildItem -Directory | Get-PSTree -Include *.ps1
+PS \> Get-ChildItem -Directory | Get-PSTree -Include *.ps1
 ```
 
 > [!IMPORTANT]
@@ -118,6 +118,22 @@ PS ..\PSTree> Get-ChildItem -Directory | Get-PSTree -Include *.ps1
 > - Only files matching the pattern (e.g., `*.ps1`) are included in the output, while directories are always shown to maintain the hierarchy.
 
 This example pipes the output of `Get-ChildItem` to `Get-PSTree`, retrieving the directory structure for each directory in the current location, but including only `.ps1` files within those directories. It displays the hierarchy with default depth (3 levels) and folder sizes, useful for focusing on PowerShell scripts while preserving directory context.
+
+### Example 8: Display directory tree with different sorting options
+
+```powershell
+# Directories first
+PS \> Get-PSTree -SortBy DirectoriesFirst
+
+# Sort everything by size (largest first)
+PS \> Get-PSTree -SortBy Size
+
+# Files first, then sort by size within each group
+PS \> Get-PSTree -SortBy FilesFirstBySize
+
+# Disable sorting for best performance
+PS \> Get-PSTree -SortBy None
+```
 
 ## PARAMETERS
 
@@ -280,7 +296,31 @@ Accept wildcard characters: False
 
 ### -SortBy
 
-{{ Fill SortBy Description }}
+Specifies the sorting method to use when displaying the directory tree.
+
+By default, files are shown before directories (`FilesFirst`). You can change the sort behavior using this parameter.
+
+__Valid values:__
+
+- `FilesFirst` (default)  
+  Files first, then directories (both sorted by name).
+- `DirectoriesFirst`  
+  Directories first, then files (both sorted by name).
+- `Name`  
+  Files and directories mixed together, sorted by name only.
+- `Size`  
+  Everything sorted by size, largest first (descending).
+- `DirectoriesFirstBySize`  
+  Directories first, then within each group sorted by size (largest first).
+- `FilesFirstBySize`  
+  Files first, then within each group sorted by size (largest first).
+- `None`  
+  No sorting is performed (maximum performance). Items appear in the order they were discovered.
+
+> [!TIP]
+>
+> - The size-based sorting options (`Size`, `DirectoriesFirstBySize`, and `FilesFirstBySize`) work especially well when combined with the `-RecursiveSize` parameter, as they allow you to quickly identify the largest directories and files across the entire hierarchy.
+> - Use `-SortBy None` when performance is critical and the natural discovery order is sufficient.
 
 ```yaml
 Type: FileSystemSortMode
@@ -289,7 +329,7 @@ Aliases: sb
 
 Required: False
 Position: Named
-Default value: None
+Default value: FilesFirst
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

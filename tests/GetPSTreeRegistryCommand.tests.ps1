@@ -145,7 +145,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
 
             $value.Kind | Should -BeOfType ([RegistryValueKind])
             $value.Name | Should -Not -BeNullOrEmpty
-            $value.PSPath | Should -Not -BeNullOrEmpty
+            $value.PSPath | Should -BeNullOrEmpty
             $value.PSParentPath | Should -Not -BeNullOrEmpty
             $value.Path | Should -BeExactly "$($value.PSParentPath.Split([string[]] '::', 1)[1]):$($value.Name)"
             $value.Hierarchy | Should -Not -BeNullOrEmpty

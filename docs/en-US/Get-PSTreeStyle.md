@@ -29,7 +29,7 @@ For details, see [__about_TreeStyle__](./about_TreeStyle.md).
 ### Example 1
 
 ```powershell
-PS ..\PSTree> $style = Get-PSTreeStyle
+PS \> $style = Get-PSTreeStyle
 ```
 
 Stores the `TreeStyle` instance in the `$style` variable.
