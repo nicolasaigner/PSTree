@@ -269,14 +269,10 @@ By default, registry values are shown before keys (`ValuesFirst`).
 
 __Valid values:__
 
-- `ValuesFirst` (default)  
-Values first, then keys (both sorted by name).
-- `KeysFirst`  
-Keys first, then values (both sorted by name).
-- `Name`  
-Keys and values mixed together, sorted by name only.
-- `None`  
-No sorting is performed (maximum performance). Items appear in the order they were discovered.
+- `ValuesFirst` (default) — Values first, then keys (both sorted by name).
+- `KeysFirst` — Keys first, then values (both sorted by name).
+- `Name` — Keys and values mixed together, sorted by name only.
+- `None` — No sorting is performed (maximum performance). Items appear in the order they were discovered.
 
 > [!TIP]
 > Use `-SortBy None` when performance is critical and the natural discovery order is sufficient.

@@ -302,20 +302,13 @@ By default, files are shown before directories (`FilesFirst`). You can change th
 
 __Valid values:__
 
-- `FilesFirst` (default)  
-  Files first, then directories (both sorted by name).
-- `DirectoriesFirst`  
-  Directories first, then files (both sorted by name).
-- `Name`  
-  Files and directories mixed together, sorted by name only.
-- `Size`  
-  Everything sorted by size, largest first (descending).
-- `DirectoriesFirstBySize`  
-  Directories first, then within each group sorted by size (largest first).
-- `FilesFirstBySize`  
-  Files first, then within each group sorted by size (largest first).
-- `None`  
-  No sorting is performed (maximum performance). Items appear in the order they were discovered.
+- `FilesFirst` (default) — Files first, then directories (both sorted by name).
+- `DirectoriesFirst` — Directories first, then files (both sorted by name).
+- `Name` — Files and directories mixed together, sorted by name only.
+- `Size` — Everything sorted by size, largest first (descending).
+- `DirectoriesFirstBySize` — Directories first, then within each group sorted by size (largest first).
+- `FilesFirstBySize` — Files first, then within each group sorted by size (largest first).
+- `None` — No sorting is performed (maximum performance). Items appear in the order they were discovered.
 
 > [!TIP]
 >
