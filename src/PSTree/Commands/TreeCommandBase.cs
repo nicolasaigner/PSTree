@@ -5,12 +5,20 @@ using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
 using PSTree.Extensions;
+using PSTree.Nodes;
 
-namespace PSTree;
+namespace PSTree.Commands;
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public abstract class TreeCommandBase : PSCmdlet
+public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
+    where TContainer : TBase
+    where TBase : TreeBase<TContainer, TBase>
+    where TSort : struct, Enum
 {
+    private bool _canceled = false;
+
+    private readonly Stack<TContainer> _stack = new(32);
+
     private WildcardPattern[]? _excludePatterns;
 
     private WildcardPattern[]? _includePatterns;
@@ -23,7 +31,7 @@ public abstract class TreeCommandBase : PSCmdlet
 
     protected bool WithInclude { get; private set; }
 
-    protected bool Canceled { get; set; }
+    protected string CurrentSource { get; private set; } = null!;
 
     [Parameter(
         ParameterSetName = PathSet,
@@ -69,6 +77,10 @@ public abstract class TreeCommandBase : PSCmdlet
     [Alias("inc")]
     public string[]? Include { get; set; }
 
+    [Parameter]
+    [Alias("sb")]
+    public TSort SortBy { get; set; }
+
     protected override void BeginProcessing()
     {
         if (Recurse && !MyInvocation.BoundParameters.ContainsKey(nameof(Depth)))
@@ -87,8 +99,6 @@ public abstract class TreeCommandBase : PSCmdlet
             WithInclude = true;
         }
     }
-
-    protected override void StopProcessing() => Canceled = true;
 
     protected IEnumerable<(ProviderInfo, string)> EnumerateResolvedPaths()
     {
@@ -123,12 +133,43 @@ public abstract class TreeCommandBase : PSCmdlet
         }
     }
 
+    protected void ProcessTree(TContainer container)
+    {
+        int depth, maxdp = 0;
+        CurrentSource = container.Source;
+        Push(container);
+
+        while (!_canceled && _stack.Count > 0)
+        {
+            TContainer current = _stack.Pop();
+            depth = current.Depth + 1;
+            maxdp = Math.Max(maxdp, depth);
+            BuildOne(current, depth);
+        }
+
+        IComparer<TBase>? comparer = GetComparer();
+        if (WithInclude) container.PruneNonIncluded();
+
+        WriteObject(
+            container.Render(maxdp, comparer),
+            enumerateCollection: true);
+    }
+
+    protected abstract void BuildOne(TContainer current, int depth);
+
+    protected void Push(TContainer container) => _stack.Push(container);
+
+    protected abstract IComparer<TBase>? GetComparer();
+
+    protected override void StopProcessing() => _canceled = true;
+
     private static bool MatchAny(
         string name,
         WildcardPattern[] patterns)
     {
         foreach (WildcardPattern pattern in patterns)
-            if (pattern.IsMatch(name)) return true;
+            if (pattern.IsMatch(name))
+                return true;
 
         return false;
     }

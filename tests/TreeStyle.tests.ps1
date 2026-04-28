@@ -1,8 +1,7 @@
 ﻿$ErrorActionPreference = 'Stop'
 
-$moduleName = (Get-Item ([IO.Path]::Combine($PSScriptRoot, '..', 'module', '*.psd1'))).BaseName
-$manifestPath = [IO.Path]::Combine($PSScriptRoot, '..', 'output', $moduleName)
-Import-Module $manifestPath
+Import-Module ([System.IO.Path]::Combine($PSScriptRoot, 'shared.psm1'))
+Import-Module $modulePath
 
 Describe 'GetPSTreeStyle Command' {
     It 'Outputs a session TreeStyle instance' {
@@ -18,6 +17,14 @@ Describe 'TreeStyle Type' {
 
     It 'OutputRendering Enum' {
         $style.OutputRendering | Should -BeOfType ([PSTree.Style.OutputRendering])
+    }
+
+    It 'RenderingStyle Enum' {
+        $style.RenderingStyle | Should -BeOfType ([PSTree.Style.RenderingStyle])
+        {
+            [PSTree.Style.RenderingStyle].GetEnumNames() |
+                ForEach-Object { $style.RenderingStyle = $_ }
+        } | Should -Not -Throw
     }
 
     It 'CombineSequence() can combine 2 VT Sequences' {

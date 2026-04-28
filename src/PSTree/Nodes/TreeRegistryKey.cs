@@ -1,0 +1,96 @@
+#if WINDOWS
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using Microsoft.Win32;
+using PSTree.Extensions;
+using PSTree.Registry;
+
+namespace PSTree.Nodes;
+
+public sealed class TreeRegistryKey : TreeRegistryBase, IDisposable
+{
+    private readonly RegistryKey _key;
+
+    internal override bool IsContainer { get; } = true;
+
+    public override string PSParentPath { get; }
+
+    public override string PSPath { get; }
+
+    public string Kind { get; } = "RegistryKey";
+
+    public override string Name { get; }
+
+    public int SubKeyCount { get; }
+
+    public int ValueCount { get; }
+
+    public RegistryView View { get; }
+
+    public DateTime? LastWriteTime { get; }
+
+    internal TreeRegistryKey(RegistryKey key)
+        : this(key, key.GetName(), key.Name)
+    { }
+
+    private TreeRegistryKey(
+        RegistryKey key,
+        string name,
+        string source,
+        int depth = 0)
+        : base(source, key.Name, depth)
+    {
+        _key = key;
+        Name = name;
+        SubKeyCount = key.SubKeyCount;
+        ValueCount = key.ValueCount;
+        View = key.View;
+        LastWriteTime = key.GetLastWriteTime();
+        PSParentPath = GetPSParentPath(key);
+        PSPath = $"{ProviderPath}{key.Name}";
+    }
+
+    private string GetPSParentPath(RegistryKey key)
+    {
+        string? parent = key.GetParent();
+        return parent is not null ? $"{ProviderPath}{parent}" : string.Empty;
+    }
+
+    internal string[] GetValueNames() => _key.GetValueNames();
+
+    internal IEnumerable<string> EnumerateKeys() =>
+#if NET8_0_OR_GREATER
+        _key.GetSubKeyNames().OrderDescending();
+#else
+        _key.GetSubKeyNames().OrderByDescending(e => e);
+#endif
+
+    internal bool TryAddSubKey(
+        string name,
+        string source,
+        [NotNullWhen(true)] out TreeRegistryKey? treeKey)
+    {
+        treeKey = null;
+        if (_key.OpenSubKey(name) is not RegistryKey key)
+            return false;
+
+        treeKey = new(key, name, source, Depth + 1)
+        {
+            Container = this
+        };
+
+        AddChild(treeKey);
+        return true;
+    }
+
+    internal void AddValue(string value, string source)
+        => AddChild(new TreeRegistryValue(this, value, source, Depth + 1));
+
+    internal RegistryValueKind GetValueKind(string value) => _key.GetValueKind(value);
+
+    public void Dispose() => _key.Dispose();
+}
+#endif

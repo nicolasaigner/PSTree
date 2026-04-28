@@ -3,11 +3,8 @@ using namespace System.Linq
 
 $ErrorActionPreference = 'Stop'
 
-$moduleName = (Get-Item ([Path]::Combine($PSScriptRoot, '..', 'module', '*.psd1'))).BaseName
-$manifestPath = [Path]::Combine($PSScriptRoot, '..', 'output', $moduleName)
-
-Import-Module $manifestPath
 Import-Module ([Path]::Combine($PSScriptRoot, 'shared.psm1'))
+Import-Module $modulePath
 
 Describe 'Get-PSTree' {
     BeforeAll {
@@ -91,12 +88,12 @@ Describe 'Get-PSTree' {
     It 'Outputs TreeFile and TreeDirectory Instances' {
         Get-PSTree -LiteralPath $testPath |
             ForEach-Object GetType |
-            Should -BeIn ([PSTree.TreeFile], [PSTree.TreeDirectory])
+            Should -BeIn ([PSTree.Nodes.TreeFile], [PSTree.Nodes.TreeDirectory])
     }
 
     It 'Excludes TreeFile instances with -Directory' {
         Get-PSTree -LiteralPath $testPath -Directory |
-            Should -BeOfType ([PSTree.TreeDirectory])
+            Should -BeOfType ([PSTree.Nodes.TreeDirectory])
     }
 
     It 'Controls recursion with -Depth parameter' {
@@ -128,7 +125,7 @@ Describe 'Get-PSTree' {
             [Enumerable]::Any(
                 [string[]] $include,
                 [Func[string, bool]] {
-                    $_.Name -like $args[0] -or $_ -is [PSTree.TreeDirectory]
+                    $_.Name -like $args[0] -or $_ -is [PSTree.Nodes.TreeDirectory]
                 }
             )
         } | Should -BeTrue
@@ -181,21 +178,23 @@ Describe 'Get-PSTree' {
     }
 
     It 'Should be able to Cancel the cmdlet' {
+        $iss = [initialsessionstate]::CreateDefault2()
+        $iss.ImportPSModulesFromPath($modulePath)
+        $ps = [powershell]::Create($iss).AddScript('Get-PSTree / -Recurse -EA 0')
+
         Measure-Command {
-            $ps = [powershell]::Create().AddScript({
-                Import-Module $args[0]
-
-                $roots = Get-PSDrive |
-                    Where-Object { $_.Provider.Name -eq 'FileSystem' } |
-                    ForEach-Object Root
-
-                Get-PSTree $roots -Recurse -ErrorAction SilentlyContinue
-            }).AddArgument($manifestPath)
-
             $task = $ps.BeginInvoke()
-            Start-Sleep 0.5
+            Start-Sleep 1
             $ps.Stop()
-            try { $ps.EndInvoke($task) } catch { }
-        } | Should -BeLessThan ([timespan] '00:00:04')
+            try { $ps.EndInvoke($task) }
+            catch [System.Management.Automation.PipelineStoppedException] { } # expected
+            finally { $ps.Dispose() }
+        } | Should -BeLessThan ([timespan] '00:00:05')
+    }
+
+    It 'Can sort output' {
+        [PSTree.Comparers.FileSystemSortMode].GetEnumNames() | ForEach-Object {
+            Get-PSTree -SortBy $_ -Depth 1 | Should -Not -BeNullOrEmpty
+        }
     }
 }

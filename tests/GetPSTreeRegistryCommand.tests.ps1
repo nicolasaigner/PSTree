@@ -5,18 +5,17 @@ using namespace Microsoft.Win32
 
 $ErrorActionPreference = 'Stop'
 
-$moduleName = (Get-Item ([Path]::Combine($PSScriptRoot, '..', 'module', '*.psd1'))).BaseName
-$manifestPath = [Path]::Combine($PSScriptRoot, '..', 'output', $moduleName)
-
-Import-Module $manifestPath
 Import-Module ([Path]::Combine($PSScriptRoot, 'shared.psm1'))
+Import-Module $modulePath
 
 if (!$isWin) {
-    Describe 'Get-PSTreeRegistry.NonWindows' {
-        It 'Should throw a PlatformNotSupportedException on Non-Windows Platforms' {
-            { Get-PSTreeRegistry HKCU:\ } | Should -Throw -ExceptionType ([PlatformNotSupportedException])
-        }
-    }
+    # 4/28/2026: The cmdlet no longer exists in non-Windows platforms.
+    #
+    # Describe 'Get-PSTreeRegistry.NonWindows' {
+    #     It 'Should throw a PlatformNotSupportedException on Non-Windows Platforms' {
+    #         { Get-PSTreeRegistry HKCU:\ } | Should -Throw -ExceptionType ([PlatformNotSupportedException])
+    #     }
+    # }
 
     return
 }
@@ -26,7 +25,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
         It 'Returns registry keys and registry values from a valid path' {
             Get-PSTreeRegistry HKCU:\ |
                 ForEach-Object GetType |
-                Should -BeIn ([PSTree.TreeRegistryKey], [PSTree.TreeRegistryValue])
+                Should -BeIn ([PSTree.Nodes.TreeRegistryKey], [PSTree.Nodes.TreeRegistryValue])
         }
 
         It 'Returns a single Key when Depth is 0' {
@@ -49,7 +48,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
 
         It 'Displays only TreeRegistryKey with -KeysOnly' {
             Get-PSTreeRegistry -Path HKCU:\ -KeysOnly |
-                Should -BeOfType ([PSTree.TreeRegistryKey])
+                Should -BeOfType ([PSTree.Nodes.TreeRegistryKey])
         }
 
         It 'Can throw if non-elevated' {
@@ -76,7 +75,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
                 [System.Linq.Enumerable]::Any(
                     [string[]] $include,
                     [System.Func[string, bool]] {
-                        $_.Name -like $args[0] -or $_ -is [PSTree.TreeRegistryKey]
+                        $_.Name -like $args[0] -or $_ -is [PSTree.Nodes.TreeRegistryKey]
                     }
                 )
             } | Should -BeTrue
@@ -129,9 +128,8 @@ Describe 'Get-PSTreeRegistry.Windows' {
             $key.SubKeyCount | Should -Not -BeNullOrEmpty
             $key.ValueCount | Should -Not -BeNullOrEmpty
             $key.View | Should -BeOfType ([RegistryView])
-            $key.Path | Should -Not -BeNullOrEmpty
-            $key.PSPath | Should -Not -BeNullOrEmpty
             $key.PSParentPath | Should -BeOfType ([string])
+            $key.Path | Should -BeExactly $key.PSPath.Split([string[]] '::', 0)[1] # windows pwsh BS
             $key.Hierarchy | Should -Not -BeNullOrEmpty
             $key.Depth | Should -BeGreaterOrEqual 0
             $key.LastWriteTime | Should -BeOfType ([datetime])
@@ -139,41 +137,43 @@ Describe 'Get-PSTreeRegistry.Windows' {
 
         It 'PSTreeRegistryValue has expected properties' {
             $value = Get-PSTreeRegistry -Path 'HKLM:\Software' -EA 0 |
-                Where-Object { $_ -is [PSTree.TreeRegistryValue] } |
+                Where-Object { $_ -is [PSTree.Nodes.TreeRegistryValue] } |
                 Select-Object -First 1
 
             $value.Kind | Should -BeOfType ([RegistryValueKind])
             $value.Name | Should -Not -BeNullOrEmpty
-            $value.Path | Should -BeNullOrEmpty
             $value.PSPath | Should -BeNullOrEmpty
             $value.PSParentPath | Should -Not -BeNullOrEmpty
+            $value.Path | Should -BeExactly "$($value.PSParentPath.Split([string[]] '::', 1)[1]):$($value.Name)"
             $value.Hierarchy | Should -Not -BeNullOrEmpty
             $value.Depth | Should -BeGreaterOrEqual 0
         }
 
         It 'PSTreeRegistryValue has GetValue()' {
             Get-PSTreeRegistry -Path 'HKLM:\Software' -EA 0 |
-                Where-Object { $_ -is [PSTree.TreeRegistryValue] } |
+                Where-Object { $_ -is [PSTree.Nodes.TreeRegistryValue] } |
                 ForEach-Object GetValue | Should -BeOfType ([object])
         }
 
         It 'Should be able to Cancel the cmdlet' {
+            $iss = [initialsessionstate]::CreateDefault2()
+            $iss.ImportPSModulesFromPath($modulePath)
+            $ps = [powershell]::Create($iss).AddScript('Get-PSTreeRegistry HKLM: -Recurse -EA 0')
+
             Measure-Command {
-                $ps = [powershell]::Create().AddScript({
-                    Import-Module $args[0]
-
-                    $roots = Get-PSDrive |
-                        Where-Object { $_.Provider.Name -eq 'Registry' } |
-                        ForEach-Object { 'Registry::' + $_.Root }
-
-                    Get-PSTreeRegistry $roots -Recurse -ErrorAction SilentlyContinue
-                }).AddArgument($manifestPath)
-
                 $task = $ps.BeginInvoke()
-                Start-Sleep 0.5
+                Start-Sleep 1
                 $ps.Stop()
-                try { $ps.EndInvoke($task) } catch { }
-            } | Should -BeLessThan ([timespan] '00:00:04')
+                try { $ps.EndInvoke($task) }
+                catch [System.Management.Automation.PipelineStoppedException] { } # expected
+                finally { $ps.Dispose() }
+            } | Should -BeLessThan ([timespan] '00:00:05')
+        }
+    }
+
+    It 'Can sort output' {
+        [PSTree.Comparers.RegistrySortMode].GetEnumNames() | ForEach-Object {
+            Get-PSTreeRegistry HKCU:\ -SortBy $_ -Depth 1 | Should -Not -BeNullOrEmpty
         }
     }
 }

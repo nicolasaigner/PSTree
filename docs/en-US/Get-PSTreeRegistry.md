@@ -48,7 +48,7 @@ The `Get-PSTreeRegistry` cmdlet provides a tree-style view of the Windows Regist
 ### Example 1: Display the `Software` registry hive with full recursion
 
 ```powershell
-PS ..\PSTree> Get-PSTreeRegistry HKLM:\Software -Recurse
+PS \> Get-PSTreeRegistry HKLM:\Software -Recurse
 ```
 
 This example retrieves all keys under `HKLM:\Software`, showing the complete hierarchy recursively.
@@ -56,7 +56,7 @@ This example retrieves all keys under `HKLM:\Software`, showing the complete hie
 ### Example 2: List only registry keys under `HKLM:\Software`, up to 2 levels deep, excluding values
 
 ```powershell
-PS ..\PSTree> Get-PSTreeRegistry HKLM:\Software -Depth 2 -KeysOnly
+PS \> Get-PSTreeRegistry HKLM:\Software -Depth 2 -KeysOnly
 ```
 
 This example restricts output to keys only (no values) and limits the depth to 2 levels for better readability.
@@ -64,9 +64,9 @@ This example restricts output to keys only (no values) and limits the depth to 2
 ### Example 3: Retrieve and Display a Value from a `TreeRegistryValue` Object
 
 ```powershell
-PS ..\PSTree> $items = Get-PSTreeRegistry HKCU:\Environment\ -Depth 2
-PS ..\PSTree> $values = $items | Where-Object { $_ -is [PSTree.TreeRegistryValue] }
-PS ..\PSTree> $values
+PS \> $items = Get-PSTreeRegistry HKCU:\Environment\ -Depth 2
+PS \> $values = $items | Where-Object { $_ -is [PSTree.TreeRegistryValue] }
+PS \> $values
 
    Hive: HKEY_CURRENT_USER\Environment
 
@@ -76,7 +76,7 @@ ExpandString ├── Path
 ExpandString ├── TEMP
 ExpandString └── TMP
 
-PS ..\PSTree> $values[1].GetValue()
+PS \> $values[1].GetValue()
 C:\Users\User\AppData\Local\Temp
 ```
 
@@ -85,7 +85,7 @@ This example demonstrates how to use `Get-PSTreeRegistry` to retrieve registry v
 ### Example 4: Traverse `HKEY_USERS` Using the Provider Path
 
 ```powershell
-PS ..\PSTree> Get-PSTreeRegistry -Path Registry::HKEY_USERS -Depth 1 -EA 0
+PS \> Get-PSTreeRegistry -Path Registry::HKEY_USERS -Depth 1 -EA 0
 
    Hive: HKEY_USERS
 
@@ -103,7 +103,7 @@ This example uses the registry provider path to explore all keys under `HKEY_USE
 ### Example 5: Filter Out Microsoft and Log-Related Items in `HKCU:\SOFTWARE` Tree
 
 ```powershell
-PS ..\PSTree> Get-PSTreeRegistry HKCU:\SOFTWARE\ -Exclude Microsoft, *Log*
+PS \> Get-PSTreeRegistry HKCU:\SOFTWARE\ -Exclude Microsoft, *Log*
 ```
 
 Excludes registry keys named "Microsoft" (e.g., `HKCU:\SOFTWARE\Microsoft`) and any keys or values with "Log" in their name (e.g., `HKCU:\SOFTWARE\UpdateLog` or a value named `ErrorLog`).
@@ -111,10 +111,23 @@ Excludes registry keys named "Microsoft" (e.g., `HKCU:\SOFTWARE\Microsoft`) and 
 ### Example 6: Select Windows-Related Registry Values in `HKCU:\SOFTWARE` Tree
 
 ```powershell
-PS ..\PSTree> Get-PSTreeRegistry HKCU:\SOFTWARE\ -Include Win*
+PS \> Get-PSTreeRegistry HKCU:\SOFTWARE\ -Include Win*
 ```
 
 Includes only registry values whose names start with "Win" (e.g., `WindowsVersion=10.0`) from the `HKCU:\SOFTWARE` tree, omitting all keys and non-matching values.
+
+### Example 7: Sort registry output using the `-SortBy` parameter
+
+```powershell
+# Show keys before values (more natural for registry exploration)
+PS \> Get-PSTreeRegistry HKCU:\Software -SortBy KeysFirst
+
+# Mix keys and values, sorted by name only
+PS \> Get-PSTreeRegistry HKLM:\Software -SortBy Name -Depth 2
+
+# Disable sorting for best performance
+PS \> Get-PSTreeRegistry HKCU:\ -SortBy None -Recurse
+```
 
 ## PARAMETERS
 
@@ -246,6 +259,33 @@ Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: True
+```
+
+### -SortBy
+
+Specifies the sorting method to use when displaying the registry tree.  
+By default, registry values are shown before keys (`ValuesFirst`).
+
+__Valid values:__
+
+- `ValuesFirst` (default) — Values first, then keys (both sorted by name).
+- `KeysFirst` — Keys first, then values (both sorted by name).
+- `Name` — Keys and values mixed together, sorted by name only.
+- `None` — No sorting is performed (maximum performance). Items appear in the order they were discovered.
+
+> [!TIP]
+> Use `-SortBy None` when performance is critical and the natural discovery order is sufficient.
+
+```yaml
+Type: RegistrySortMode
+Parameter Sets: (All)
+Aliases: sb
+
+Required: False
+Position: Named
+Default value: ValuesFirst
+Accept pipeline input: False
+Accept wildcard characters: False
 ```
 
 ### CommonParameters

@@ -64,7 +64,7 @@ Set-Location ./PSTree
 #### Get the current directory tree with default parameters values
 
 ```powershell
-PS ..\PSTree> Get-PSTree | Select-Object -First 20
+PS \> Get-PSTree | Select-Object -First 20
 
    Source: C:\User\Documents\PSTree
 
@@ -95,7 +95,7 @@ d----        266.71 KB ├── assets
 #### Excludes items starting with `.g`, `.v`, `.m` and `assets`
 
 ```powershell
-PS ..\PSTree> Get-PSTree -Exclude .[gvm]*, assets | Select-Object -First 20
+PS \> Get-PSTree -Exclude .[gvm]*, assets | Select-Object -First 20
 
    Source: C:\User\Documents\PSTree
 
@@ -126,7 +126,7 @@ d----        513.42 KB ├── output
 #### Includes `.ps1` and `.cs` files and excludes `tools` folder
 
 ```powershell
-PS ..\PSTree> Get-PStree -Include *.ps1, *.cs -Exclude tools
+PS \> Get-PStree -Include *.ps1, *.cs -Exclude tools
 
    Source: C:\User\Documents\PSTree
 
@@ -162,7 +162,7 @@ d----         27.48 KB └── tests
 #### Get the recursive size of the folders
 
 ```powershell
-PS ..\PSTree> Get-PSTree .\src\ -Depth 2 -Directory -RecursiveSize
+PS \> Get-PSTree .\src\ -Depth 2 -Directory -RecursiveSize
 
    Source: C:\User\Documents\PSTree\src
 
@@ -184,7 +184,7 @@ d----         11.69 KB     └── Style
 #### Get the tree-view of `HKCU:\System`
 
 ```powershell
-PS ..\PSTree> Get-PSTreeRegistry HKCU:\System -Depth 2
+PS \> Get-PSTreeRegistry HKCU:\System -Depth 2
 
    Hive: HKEY_CURRENT_USER\System
 
@@ -209,7 +209,7 @@ RegistryKey      └── Control
 #### Filter Out Specific Items from the `HKCU:\System` Tree
 
 ```powershell
-PS ..\PSTree> Get-PSTreeRegistry HKCU:\System -Depth 2 -Exclude CurrentControlSet, GameDV*
+PS \> Get-PSTreeRegistry HKCU:\System -Depth 2 -Exclude CurrentControlSet, GameDV*
 
    Hive: HKEY_CURRENT_USER\System
 
@@ -226,7 +226,7 @@ RegistryKey      └── Children
 #### Select GameDVR-Related Values in the `HKCU:\System` Tree
 
 ```powershell
-PS ..\PSTree> Get-PSTreeRegistry HKCU:\System -Depth 2 -Include GameDVR*
+PS \> Get-PSTreeRegistry HKCU:\System -Depth 2 -Include GameDVR*
 
    Hive: HKEY_CURRENT_USER\System
 
@@ -244,7 +244,7 @@ DWord            └── GameDVR_EFSEFeatureFlags
 #### Show only Keys
 
 ```powershell
-PS ..\PSTree> Get-PSTreeRegistry HKCU:\System -Depth 2 -KeysOnly
+PS \> Get-PSTreeRegistry HKCU:\System -Depth 2 -KeysOnly
 
    Hive: HKEY_CURRENT_USER\System
 
@@ -262,9 +262,9 @@ RegistryKey      └── Control
 #### Get the value of a `TreeRegistryValue` item
 
 ```powershell
-PS ..\PSTree> $items = Get-PSTreeRegistry HKCU:\Environment\ -Depth 2
-PS ..\PSTree> $values = $items | Where-Object { $_ -is [PSTree.TreeRegistryValue] }
-PS ..\PSTree> $values
+PS \> $items = Get-PSTreeRegistry HKCU:\Environment\ -Depth 2
+PS \> $values = $items | Where-Object { $_ -is [PSTree.TreeRegistryValue] }
+PS \> $values
 
    Hive: HKEY_CURRENT_USER\Environment
 
@@ -274,7 +274,7 @@ ExpandString ├── Path
 ExpandString ├── TEMP
 ExpandString └── TMP
 
-PS ..\PSTree> $values[1].GetValue()
+PS \> $values[1].GetValue()
 C:\Users\User\AppData\Local\Temp
 ```
 
