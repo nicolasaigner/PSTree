@@ -263,8 +263,7 @@ Accept wildcard characters: True
 
 ### -SortBy
 
-Specifies the sorting method to use when displaying the registry tree.
-
+Specifies the sorting method to use when displaying the registry tree.  
 By default, registry values are shown before keys (`ValuesFirst`).
 
 __Valid values:__

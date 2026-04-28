@@ -296,8 +296,7 @@ Accept wildcard characters: False
 
 ### -SortBy
 
-Specifies the sorting method to use when displaying the directory tree.
-
+Specifies the sorting method to use when displaying the directory tree.  
 By default, files are shown before directories (`FilesFirst`). You can change the sort behavior using this parameter.
 
 __Valid values:__
