@@ -93,8 +93,11 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
         if (Exclude is not null)
             _excludePatterns = [.. Exclude.Select(e => new WildcardPattern(e, options))];
 
-        if (WithInclude = Include is not null)
+        if (Include is not null)
+        {
             _includePatterns = [.. Include.Select(e => new WildcardPattern(e, options))];
+            WithInclude = true;
+        }
     }
 
     protected IEnumerable<(ProviderInfo, string)> EnumerateResolvedPaths()

@@ -26,7 +26,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
         It 'Returns registry keys and registry values from a valid path' {
             Get-PSTreeRegistry HKCU:\ |
                 ForEach-Object GetType |
-                Should -BeIn ([PSTree.TreeRegistryKey], [PSTree.TreeRegistryValue])
+                Should -BeIn ([PSTree.Nodes.TreeRegistryKey], [PSTree.Nodes.TreeRegistryValue])
         }
 
         It 'Returns a single Key when Depth is 0' {
@@ -49,7 +49,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
 
         It 'Displays only TreeRegistryKey with -KeysOnly' {
             Get-PSTreeRegistry -Path HKCU:\ -KeysOnly |
-                Should -BeOfType ([PSTree.TreeRegistryKey])
+                Should -BeOfType ([PSTree.Nodes.TreeRegistryKey])
         }
 
         It 'Can throw if non-elevated' {
@@ -76,7 +76,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
                 [System.Linq.Enumerable]::Any(
                     [string[]] $include,
                     [System.Func[string, bool]] {
-                        $_.Name -like $args[0] -or $_ -is [PSTree.TreeRegistryKey]
+                        $_.Name -like $args[0] -or $_ -is [PSTree.Nodes.TreeRegistryKey]
                     }
                 )
             } | Should -BeTrue
@@ -129,9 +129,8 @@ Describe 'Get-PSTreeRegistry.Windows' {
             $key.SubKeyCount | Should -Not -BeNullOrEmpty
             $key.ValueCount | Should -Not -BeNullOrEmpty
             $key.View | Should -BeOfType ([RegistryView])
-            $key.Path | Should -Not -BeNullOrEmpty
-            $key.PSPath | Should -Not -BeNullOrEmpty
             $key.PSParentPath | Should -BeOfType ([string])
+            $key.Path | Should -BeExactly $key.PSPath.Split('::')[1]
             $key.Hierarchy | Should -Not -BeNullOrEmpty
             $key.Depth | Should -BeGreaterOrEqual 0
             $key.LastWriteTime | Should -BeOfType ([datetime])
@@ -139,21 +138,21 @@ Describe 'Get-PSTreeRegistry.Windows' {
 
         It 'PSTreeRegistryValue has expected properties' {
             $value = Get-PSTreeRegistry -Path 'HKLM:\Software' -EA 0 |
-                Where-Object { $_ -is [PSTree.TreeRegistryValue] } |
+                Where-Object { $_ -is [PSTree.Nodes.TreeRegistryValue] } |
                 Select-Object -First 1
 
             $value.Kind | Should -BeOfType ([RegistryValueKind])
             $value.Name | Should -Not -BeNullOrEmpty
-            $value.Path | Should -BeNullOrEmpty
-            $value.PSPath | Should -BeNullOrEmpty
+            $value.PSPath | Should -Not -BeNullOrEmpty
             $value.PSParentPath | Should -Not -BeNullOrEmpty
+            $value.Path | Should -BeExactly "$($value.PSParentPath.Split('::')[1]):$($value.Name)"
             $value.Hierarchy | Should -Not -BeNullOrEmpty
             $value.Depth | Should -BeGreaterOrEqual 0
         }
 
         It 'PSTreeRegistryValue has GetValue()' {
             Get-PSTreeRegistry -Path 'HKLM:\Software' -EA 0 |
-                Where-Object { $_ -is [PSTree.TreeRegistryValue] } |
+                Where-Object { $_ -is [PSTree.Nodes.TreeRegistryValue] } |
                 ForEach-Object GetValue | Should -BeOfType ([object])
         }
 

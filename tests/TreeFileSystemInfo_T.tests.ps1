@@ -27,17 +27,17 @@ Describe 'TreeFileSystemInfo<T>' {
     It 'Can determine if an instance is a Directory or File with its .HasFlag() method' {
         $testPath | Get-PSTree | ForEach-Object {
             if ($_.HasFlag([System.IO.FileAttributes]::Directory)) {
-                $_ | Should -BeOfType ([PSTree.TreeDirectory])
+                $_ | Should -BeOfType ([PSTree.Nodes.TreeDirectory])
                 return
             }
 
-            $_ | Should -BeOfType ([PSTree.TreeFile])
+            $_ | Should -BeOfType ([PSTree.Nodes.TreeFile])
         }
     }
 
     It 'Shares same properties as FileSystemInfo' {
         $instance = $testPath | Get-PSTree |
-            Where-Object { $_ -is [PSTree.TreeFile] } |
+            Where-Object { $_ -is [PSTree.Nodes.TreeFile] } |
             Select-Object -First 1
 
         $instance | Should -HaveCount 1

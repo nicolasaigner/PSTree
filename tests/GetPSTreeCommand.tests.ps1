@@ -91,12 +91,12 @@ Describe 'Get-PSTree' {
     It 'Outputs TreeFile and TreeDirectory Instances' {
         Get-PSTree -LiteralPath $testPath |
             ForEach-Object GetType |
-            Should -BeIn ([PSTree.TreeFile], [PSTree.TreeDirectory])
+            Should -BeIn ([PSTree.Nodes.TreeFile], [PSTree.Nodes.TreeDirectory])
     }
 
     It 'Excludes TreeFile instances with -Directory' {
         Get-PSTree -LiteralPath $testPath -Directory |
-            Should -BeOfType ([PSTree.TreeDirectory])
+            Should -BeOfType ([PSTree.Nodes.TreeDirectory])
     }
 
     It 'Controls recursion with -Depth parameter' {
@@ -128,7 +128,7 @@ Describe 'Get-PSTree' {
             [Enumerable]::Any(
                 [string[]] $include,
                 [Func[string, bool]] {
-                    $_.Name -like $args[0] -or $_ -is [PSTree.TreeDirectory]
+                    $_.Name -like $args[0] -or $_ -is [PSTree.Nodes.TreeDirectory]
                 }
             )
         } | Should -BeTrue

@@ -5,10 +5,6 @@ namespace PSTree.Nodes;
 
 public sealed class TreeRegistryValue : TreeRegistryBase
 {
-    private readonly string _parentPath;
-
-    private readonly string _valueName;
-
     internal override bool Include { get; set; } = true;
 
     internal override bool IsContainer { get; } = false;
@@ -24,20 +20,22 @@ public sealed class TreeRegistryValue : TreeRegistryBase
         string value,
         string source,
         int depth)
-        : base(source, depth)
+        : base(source, $"{key.Path}:{value}", depth)
     {
-        _parentPath = key.Name;
-        _valueName = value;
         Container = key;
         Name = GetNameOrDefault(value);
         Kind = key.GetValueKind(value);
-        PSParentPath = $"{ProviderPath}{_parentPath}";
+        PSParentPath = $"{ProviderPath}{key.Path}";
     }
 
     private static string GetNameOrDefault(string value) =>
         string.IsNullOrEmpty(value) ? "(Default)" : value;
 
     public object? GetValue()
-        => Microsoft.Win32.Registry.GetValue(_parentPath, _valueName, null);
+    {
+        string[] tokens = Path.Split([':'], 2);
+        if (tokens.Length != 2) return null;
+        return Microsoft.Win32.Registry.GetValue(tokens[0], tokens[1], null);
+    }
 }
 #endif

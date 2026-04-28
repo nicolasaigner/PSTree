@@ -36,7 +36,7 @@ public sealed class TreeRegistryKey : TreeRegistryBase, IDisposable
         string name,
         string source,
         int depth = 0)
-        : base(source, depth, key.Name)
+        : base(source, key.Name, depth)
     {
         _key = key;
         Name = name;

@@ -1,12 +1,12 @@
 #if WINDOWS
 namespace PSTree.Nodes;
 
-public abstract class TreeRegistryBase(string source, int depth = 0, string? path = null)
+public abstract class TreeRegistryBase(string source, string path, int depth = 0)
     : TreeBase<TreeRegistryKey, TreeRegistryBase>(source, depth)
 {
     protected const string ProviderPath = @"Microsoft.PowerShell.Core\Registry::";
 
-    public string? Path { get; } = path;
+    public string Path { get; } = path;
 
     public virtual string? PSPath { get => field ??= GetPSPath(Path); }
 

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+- __TBD__
+  - Refactored namespace structure: Moved all tree node classes from the `PSTree` namespace to `PSTree.Nodes`:
+    - `TreeBase`, `TreeDirectory`, `TreeFile`, `TreeFileSystemInfo`, `TreeFileSystemInfo<T>`, `TreeRegistryBase`, `TreeRegistryKey`, and `TreeRegistryValue`.
+  - Registry values now include the value name in the `Path` property using colon (`:`) separator:
+    - Keys: `HKEY_CURRENT_USER\Environment`
+    - Values: `HKEY_CURRENT_USER\Environment:TEMP`
+
 - __09/25/2025__
   - Adds `LastWriteTime` Property to `TreeRegistryKey` class.
 
