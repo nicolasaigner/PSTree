@@ -2,5 +2,8 @@
 $isWin = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
     [System.Runtime.InteropServices.OSPlatform]::Windows)
 
-$testPath, $isWin | Out-Null
-Export-ModuleMember -Variable testPath, isWin
+$moduleName = (Get-Item ([System.IO.Path]::Combine($PSScriptRoot, '..', 'module', '*.psd1'))).BaseName
+$modulePath = [System.IO.Path]::Combine($PSScriptRoot, '..', 'output', $moduleName) | Convert-Path
+
+$testPath, $isWin, $modulePath | Out-Null
+Export-ModuleMember -Variable testPath, isWin, modulePath

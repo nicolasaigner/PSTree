@@ -3,11 +3,8 @@ using namespace System.Linq
 
 $ErrorActionPreference = 'Stop'
 
-$moduleName = (Get-Item ([Path]::Combine($PSScriptRoot, '..', 'module', '*.psd1'))).BaseName
-$manifestPath = [Path]::Combine($PSScriptRoot, '..', 'output', $moduleName)
-
-Import-Module $manifestPath
 Import-Module ([Path]::Combine($PSScriptRoot, 'shared.psm1'))
+Import-Module $modulePath
 
 Describe 'Get-PSTree' {
     BeforeAll {
@@ -182,7 +179,7 @@ Describe 'Get-PSTree' {
 
     It 'Should be able to Cancel the cmdlet' {
         $iss = [initialsessionstate]::CreateDefault2()
-        $iss.ImportPSModulesFromPath($manifestPath)
+        $iss.ImportPSModulesFromPath($modulePath)
         $ps = [powershell]::Create($iss).AddScript('Get-PSTree / -Recurse -EA 0')
 
         Measure-Command {
