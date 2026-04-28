@@ -4,7 +4,6 @@ using namespace System.Security
 using namespace Microsoft.Win32
 
 $ErrorActionPreference = 'Stop'
-$ErrorView = 'DetailedView'
 
 Import-Module ([Path]::Combine($PSScriptRoot, 'shared.psm1'))
 Import-Module $modulePath
