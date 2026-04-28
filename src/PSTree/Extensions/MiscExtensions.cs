@@ -18,13 +18,15 @@ internal static class MiscExtensions
 
     extension(string value)
     {
-        internal string? GetParent() => Path.GetDirectoryName(value);
+
     }
 
 
     extension(RegistryKey registryKey)
     {
         internal string GetName() => Path.GetFileName(registryKey.Name);
+
+        internal string? GetParent() => Path.GetDirectoryName(registryKey.Name);
     }
 
     extension(TreeRegistryKey treeKey)

@@ -8,10 +8,8 @@ public abstract class TreeRegistryBase(string source, string path, int depth = 0
 {
     protected const string ProviderPath = @"Microsoft.PowerShell.Core\Registry::";
 
+    public abstract string PSParentPath { get; }
+    public abstract string PSPath { get; }
     public string Path { get; } = path;
-
-    public string PSPath { get; } = $"{ProviderPath}{path}";
-
-    public virtual string PSParentPath { get; } = $"{ProviderPath}{path.GetParent()}";
 }
 #endif

@@ -278,6 +278,22 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -SortBy
+
+{{ Fill SortBy Description }}
+
+```yaml
+Type: FileSystemSortMode
+Parameter Sets: (All)
+Aliases: sb
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 
 This cmdlet supports the common parameters. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).

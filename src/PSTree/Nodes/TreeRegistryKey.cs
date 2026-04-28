@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using Microsoft.Win32;
 using PSTree.Extensions;
@@ -14,6 +15,10 @@ public sealed class TreeRegistryKey : TreeRegistryBase, IDisposable
     private readonly RegistryKey _key;
 
     internal override bool IsContainer { get; } = true;
+
+    public override string PSParentPath { get; }
+
+    public override string PSPath { get; }
 
     public string Kind { get; } = "RegistryKey";
 
@@ -44,6 +49,8 @@ public sealed class TreeRegistryKey : TreeRegistryBase, IDisposable
         ValueCount = key.ValueCount;
         View = key.View;
         LastWriteTime = key.GetLastWriteTime();
+        PSParentPath = $"{ProviderPath}{key.GetParent()}";
+        PSPath = $"{ProviderPath}{key.Name}";
     }
 
     internal string[] GetValueNames() => _key.GetValueNames();
