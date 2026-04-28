@@ -13,13 +13,13 @@ public abstract class TreeFileSystemInfo(string source, int depth = 0)
 
     internal void RecursiveDecrement()
     {
-        TreeDirectory? parent = Container;
-        if (parent is null) return;
+        TreeDirectory? i = Container;
+        if (i is null) return;
 
-        parent.ItemCount--;
-        parent.TotalItemCount--;
+        i.ItemCount--;
+        i.TotalItemCount--;
 
-        for (parent = parent.Container; parent is not null; parent = parent.Container)
-            parent.TotalItemCount--;
+        for (i = i.Container; i is not null; i = i.Container)
+            i.TotalItemCount--;
     }
 }

@@ -97,8 +97,8 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
             if (children[i] is TContainer container)
             {
                 container.PruneNonIncluded();
-                if (container.Include) continue;
 
+                if (container.Include) continue;
                 if (container is TreeDirectory dir)
                     dir.RecursiveDecrement();
 

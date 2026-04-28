@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
@@ -52,9 +51,10 @@ public sealed class GetPSTreeRegistryCommand
 
     protected override void BuildOne(TreeRegistryKey current, int depth)
     {
+        bool hasValue = false;
+
         using (current)
         {
-            bool hasValue = false;
             if (depth > Depth) return;
             if (!KeysOnly)
             {
@@ -122,11 +122,7 @@ public sealed class GetPSTreeRegistryCommand
         return true;
     }
 
-    protected override IComparer<TreeRegistryBase>? GetComparer() => SortBy switch
-    {
-        RegistrySortMode.ValuesFirst => TreeRegistryComparer.ByValue,
-        RegistrySortMode.KeysFirst => TreeRegistryComparer.ByKey,
-        _ => null // None
-    };
+    protected override IComparer<TreeRegistryBase>? GetComparer()
+        => TreeComparerFactory.Get(SortBy);
 #endif
 }

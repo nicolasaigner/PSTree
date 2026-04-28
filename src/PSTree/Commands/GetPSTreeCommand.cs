@@ -113,11 +113,6 @@ public sealed class GetPSTreeCommand
     private static bool IsHidden(FileSystemInfo item)
         => item.Attributes.HasFlag(FileAttributes.Hidden);
 
-    protected override IComparer<TreeFileSystemInfo>? GetComparer() => SortBy switch
-    {
-        FileSystemSortMode.FilesFirst => TreeFileSystemComparer.ByFile,
-        FileSystemSortMode.DirectoriesFirst => TreeFileSystemComparer.ByDirectory,
-        FileSystemSortMode.Size => TreeFileSystemComparer.BySize,
-        _ => null // None
-    };
+    protected override IComparer<TreeFileSystemInfo>? GetComparer()
+        => TreeComparerFactory.Get(SortBy);
 }

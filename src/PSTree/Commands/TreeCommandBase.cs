@@ -93,11 +93,8 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
         if (Exclude is not null)
             _excludePatterns = [.. Exclude.Select(e => new WildcardPattern(e, options))];
 
-        if (Include is not null)
-        {
+        if (WithInclude = Include is not null)
             _includePatterns = [.. Include.Select(e => new WildcardPattern(e, options))];
-            WithInclude = true;
-        }
     }
 
     protected IEnumerable<(ProviderInfo, string)> EnumerateResolvedPaths()
@@ -138,6 +135,7 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
         int depth, maxdp = 0;
         CurrentSource = container.Source;
         Push(container);
+
         while (!_canceled && _stack.Count > 0)
         {
             TContainer current = _stack.Pop();
