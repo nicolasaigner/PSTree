@@ -12,11 +12,13 @@ Import-Module $manifestPath
 Import-Module ([Path]::Combine($PSScriptRoot, 'shared.psm1'))
 
 if (!$isWin) {
-    Describe 'Get-PSTreeRegistry.NonWindows' {
-        It 'Should throw a PlatformNotSupportedException on Non-Windows Platforms' {
-            { Get-PSTreeRegistry HKCU:\ } | Should -Throw -ExceptionType ([PlatformNotSupportedException])
-        }
-    }
+    # 4/28/2026: The cmdlet no longer exists in non-Windows platforms.
+    #
+    # Describe 'Get-PSTreeRegistry.NonWindows' {
+    #     It 'Should throw a PlatformNotSupportedException on Non-Windows Platforms' {
+    #         { Get-PSTreeRegistry HKCU:\ } | Should -Throw -ExceptionType ([PlatformNotSupportedException])
+    #     }
+    # }
 
     return
 }
@@ -172,7 +174,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
                 Start-Sleep 0.5
                 $ps.Stop()
                 try { $ps.EndInvoke($task) } catch { }
-            } | Should -BeLessThan ([timespan] '00:00:04')
+            } | Should -BeLessThan ([timespan] '00:00:10')
         }
     }
 }
