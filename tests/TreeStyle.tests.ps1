@@ -20,6 +20,14 @@ Describe 'TreeStyle Type' {
         $style.OutputRendering | Should -BeOfType ([PSTree.Style.OutputRendering])
     }
 
+    It 'RenderingStyle Enum' {
+        $style.RenderingStyle | Should -BeOfType ([PSTree.Style.RenderingStyle])
+        {
+            [PSTree.Style.RenderingStyle].GetEnumNames() |
+                ForEach-Object { $style.RenderingStyle = $_ }
+        } | Should -Not -Throw
+    }
+
     It 'CombineSequence() can combine 2 VT Sequences' {
         $vt = $style.CombineSequence(
             $style.Palette.Background.BrightRed,

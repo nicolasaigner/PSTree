@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Win32;
+using PSTree.Extensions;
 using PSTree.Registry;
-using IOPath = System.IO.Path;
 
 namespace PSTree.Nodes;
 
@@ -28,7 +28,7 @@ public sealed class TreeRegistryKey : TreeRegistryBase, IDisposable
     public DateTime? LastWriteTime { get; }
 
     internal TreeRegistryKey(RegistryKey key)
-        : this(key, IOPath.GetFileName(key.Name), key.Name)
+        : this(key, key.GetName(), key.Name)
     { }
 
     private TreeRegistryKey(

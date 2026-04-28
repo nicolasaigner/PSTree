@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using System.Runtime.InteropServices;
 using System.Security;
 using PSTree.Nodes;
 

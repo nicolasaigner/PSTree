@@ -159,22 +159,18 @@ Describe 'Get-PSTreeRegistry.Windows' {
         }
 
         It 'Should be able to Cancel the cmdlet' {
+            $iss = [initialsessionstate]::CreateDefault2()
+            $iss.ImportPSModulesFromPath($manifestPath)
+            $ps = [powershell]::Create($iss).AddScript('Get-PSTreeRegistry HKLM: -Recurse -EA 0')
+
             Measure-Command {
-                $ps = [powershell]::Create().AddScript({
-                    Import-Module $args[0]
-
-                    $roots = Get-PSDrive |
-                        Where-Object { $_.Provider.Name -eq 'Registry' } |
-                        ForEach-Object { 'Registry::' + $_.Root }
-
-                    Get-PSTreeRegistry $roots -Recurse -ErrorAction SilentlyContinue
-                }).AddArgument($manifestPath)
-
                 $task = $ps.BeginInvoke()
-                Start-Sleep 0.5
+                Start-Sleep 1
                 $ps.Stop()
-                try { $ps.EndInvoke($task) } catch { }
-            } | Should -BeLessThan ([timespan] '00:00:10')
+                try { $ps.EndInvoke($task) }
+                catch { }
+                finally { $ps.Dispose() }
+            } | Should -BeLessThan ([timespan] '00:00:05')
         }
     }
 }

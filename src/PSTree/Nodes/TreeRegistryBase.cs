@@ -1,4 +1,6 @@
 #if WINDOWS
+using PSTree.Extensions;
+
 namespace PSTree.Nodes;
 
 public abstract class TreeRegistryBase(string source, string path, int depth = 0)
@@ -8,15 +10,8 @@ public abstract class TreeRegistryBase(string source, string path, int depth = 0
 
     public string Path { get; } = path;
 
-    public virtual string? PSPath { get => field ??= GetPSPath(Path); }
+    public string PSPath { get; } = $"{ProviderPath}{path}";
 
-    public virtual string? PSParentPath { get => field ??= GetPSParentPath(Path); }
-
-    private static string? GetPSPath(string? path) =>
-        string.IsNullOrEmpty(path) ? null : $"{ProviderPath}{path}";
-
-    private static string? GetPSParentPath(string? path) =>
-        string.IsNullOrEmpty(path = System.IO.Path.GetDirectoryName(path))
-            ? null : $"{ProviderPath}{path}";
+    public virtual string PSParentPath { get; } = $"{ProviderPath}{path.GetParent()}";
 }
 #endif

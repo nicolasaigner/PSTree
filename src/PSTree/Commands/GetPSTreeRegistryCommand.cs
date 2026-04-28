@@ -6,7 +6,6 @@ using Microsoft.Win32;
 using PSTree.Comparers;
 using PSTree.Extensions;
 using PSTree.Nodes;
-using IOPath = System.IO.Path;
 using PSTree.Registry;
 using System.Diagnostics.CodeAnalysis;
 
@@ -69,7 +68,7 @@ public sealed class GetPSTreeRegistryCommand
                 }
                 catch (SecurityException exception)
                 {
-                    string path = IOPath.Combine(current.Name, name);
+                    string path = current.JoinPath(name);
                     WriteError(exception.ToSecurityError(path));
                 }
             }
@@ -83,17 +82,17 @@ public sealed class GetPSTreeRegistryCommand
 
     private bool TryGetKey(string path, [NotNullWhen(true)] out RegistryKey? key)
     {
-        string[] tokens = path.Split(['\\'], 2);
+        (string baseKey, string? subKey) = path.Split(['\\'], 2);
         key = default;
 
-        if (!RegistryMappings.TryGetKey(tokens[0], out RegistryKey? value))
+        if (!RegistryMappings.TryGetKey(baseKey, out RegistryKey? value))
             return false;
 
-        if (tokens.Length == 2 && !string.IsNullOrWhiteSpace(tokens[1]))
+        if (!string.IsNullOrWhiteSpace(subKey))
         {
             try
             {
-                if ((key = value.OpenSubKey(tokens[1])) is null)
+                if ((key = value.OpenSubKey(subKey)) is null)
                 {
                     WriteError(path.ToInvalidPathError());
                     return false;

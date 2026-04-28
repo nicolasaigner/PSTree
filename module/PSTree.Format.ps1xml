@@ -226,6 +226,10 @@
                 <PropertyName>OutputRendering</PropertyName>
               </ListItem>
               <ListItem>
+                <Label>RenderingStyle</Label>
+                <PropertyName>RenderingStyle</PropertyName>
+              </ListItem>
+              <ListItem>
                 <Label>Reset</Label>
                 <ScriptBlock>
                   [PSTree.Style.TreeStyle]::Instance.EscapeSequence($_.Reset)

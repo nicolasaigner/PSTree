@@ -13,7 +13,7 @@ public sealed class TreeRegistryValue : TreeRegistryBase
 
     public override string Name { get; }
 
-    public override string? PSParentPath { get; }
+    public override string PSParentPath { get; }
 
     internal TreeRegistryValue(
         TreeRegistryKey key,
@@ -34,7 +34,6 @@ public sealed class TreeRegistryValue : TreeRegistryBase
     public object? GetValue()
     {
         string[] tokens = Path.Split([':'], 2);
-        if (tokens.Length != 2) return null;
         return Microsoft.Win32.Registry.GetValue(tokens[0], tokens[1], null);
     }
 }
