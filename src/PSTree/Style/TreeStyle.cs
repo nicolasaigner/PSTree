@@ -53,6 +53,9 @@ public sealed partial class TreeStyle
             RenderingSet = value switch
             {
                 RenderingStyle.Fancy => RenderingSet.Fancy,
+                RenderingStyle.FancyRounded => RenderingSet.FancyRounded,
+                RenderingStyle.Classic => RenderingSet.Classic,
+                RenderingStyle.ClassicRounded => RenderingSet.ClassicRounded,
                 _ => throw new ArgumentOutOfRangeException(nameof(RenderingStyle))
             };
 

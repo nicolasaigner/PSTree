@@ -1,6 +1,4 @@
 #if WINDOWS
-using PSTree.Extensions;
-
 namespace PSTree.Nodes;
 
 public abstract class TreeRegistryBase(string source, string path, int depth = 0)
