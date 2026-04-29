@@ -33,10 +33,9 @@ public sealed class TreeRegistryValue : TreeRegistryBase
         PSParentPath = $"{ProviderPath}{key.Path}";
     }
 
-    private static string GetNameOrDefault(string name) =>
-        string.IsNullOrEmpty(name) ? "(Default)" : name;
+    private static string GetNameOrDefault(string name)
+        => string.IsNullOrEmpty(name) ? "(Default)" : name;
 
-    public object? GetValue()
-        => Container is TreeRegistryKey key ? key.GetValue(_name) : null;
+    public object? GetValue() => Container?.GetValue(_name);
 }
 #endif

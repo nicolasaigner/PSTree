@@ -18,8 +18,7 @@ You can access the singleton instance of `TreeStyle` through either the [Get-PST
  `[PSTree.Style.TreeStyle]::Instance` property:
 
 <div>
-  &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/TreeStyle.png" alt="TreeStyle" width="50%">
+  <img src="../../assets/TreeStyle.png" alt="TreeStyle" width="55%">
 </div>
 
 The `TreeStyle` class offers methods for combining escape sequences and applying text accents, such as bold or italic. See the next section for additional details.
@@ -48,8 +47,7 @@ Registry              Property     public RegistryStyle Registry { get; }
 The `.EscapeSequence()` method reveals the escape sequence applied to generate specific colors or accents. For example:
 
 <div>
-  &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/EscapeSequence.png" alt="TreeStyle" width="75%">
+  <img src="../../assets/EscapeSequence.png" alt="TreeStyle" width="70%">
 </div>
 
 ## CUSTOMIZING OUTPUT
@@ -66,8 +64,7 @@ You can customize the output of [`Get-PSTree`][5] by modifying the properties of
 Consider the standard output of `Get-PSTree`:
 
 <div>
-  &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/Get-PSTree.Before.png" alt="Get-PSTree.Before" width="65%">
+  <img src="../../assets/Get-PSTree.Before.png" alt="Get-PSTree.Before" width="55%">
 </div>
 
 You can adjust the appearance by modifying the `PSTree.Style.FileSystemStyle` object. Here’s an example of how to apply customizations:
@@ -95,8 +92,7 @@ $style.FileSystem.Directory = "`e[45m"
 After applying these changes, re-running the same `Get-PSTree` command will display the updated styles:
 
 <div>
-  &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/Get-PSTree.After.png" alt="Get-PSTree.After" width="65%">
+  <img src="../../assets/Get-PSTree.After.png" alt="Get-PSTree.After" width="55%">
 </div>
 
 ### Get-PSTreeRegistry
@@ -112,8 +108,7 @@ Starting with [__PSTree v2.2.3__](../../CHANGELOG.md#v223), the [`Get-PSTreeRegi
 Here’s the standard output of `Get-PSTreeRegistry` before customization:
 
 <div>
-  &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/Get-PSTreeRegistry.Before.png" alt="Get-PSTreeRegistry.Before" width="45%" height="45%">
+  <img src="../../assets/Get-PSTreeRegistry.Before.png" alt="Get-PSTreeRegistry.Before" width="55%">
 </div>
 
 You can customize the colors with the following code:
@@ -132,8 +127,7 @@ $style.Registry.RegistryValueKind['String'] = $palette.Foreground.BrightGreen
 After applying these changes, re-running `Get-PSTreeRegistry` reflects the updated styles:
 
 <div>
-  &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/Get-PSTreeRegistry.After.png" alt="Get-PSTreeRegistry.After" width="45%" height="45%">
+  <img src="../../assets/Get-PSTreeRegistry.After.png" alt="Get-PSTreeRegistry.After" width="55%">
 </div>
 
 ## DISABLING ANSI OUTPUT
