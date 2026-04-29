@@ -1,11 +1,12 @@
 #if WINDOWS
 using Microsoft.Win32;
-using PSTree.Extensions;
 
 namespace PSTree.Nodes;
 
 public sealed class TreeRegistryValue : TreeRegistryBase
 {
+    private readonly string _name;
+
     internal override bool Include { get; set; } = true;
 
     internal override bool IsContainer { get; } = false;
@@ -20,24 +21,22 @@ public sealed class TreeRegistryValue : TreeRegistryBase
 
     internal TreeRegistryValue(
         TreeRegistryKey key,
-        string value,
+        string name,
         string source,
         int depth)
-        : base(source, $"{key.Path}:{value}", depth)
+        : base(source, $"{key.Path}\\{GetNameOrDefault(name)}", depth)
     {
+        _name = name;
         Container = key;
-        Name = GetNameOrDefault(value);
-        Kind = key.GetValueKind(value);
+        Name = GetNameOrDefault(name);
+        Kind = key.GetValueKind(name);
         PSParentPath = $"{ProviderPath}{key.Path}";
     }
 
-    private static string GetNameOrDefault(string value) =>
-        string.IsNullOrEmpty(value) ? "(Default)" : value;
+    private static string GetNameOrDefault(string name) =>
+        string.IsNullOrEmpty(name) ? "(Default)" : name;
 
     public object? GetValue()
-    {
-        (string path, string? value) = Path.Split([':'], 2);
-        return Microsoft.Win32.Registry.GetValue(path, value, null);
-    }
+        => Container is TreeRegistryKey key ? key.GetValue(_name) : null;
 }
 #endif

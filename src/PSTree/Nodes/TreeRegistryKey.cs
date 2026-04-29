@@ -90,6 +90,9 @@ public sealed class TreeRegistryKey : TreeRegistryBase, IDisposable
     internal RegistryValueKind GetValueKind(string value)
         => _key.GetValueKind(value);
 
+    internal object? GetValue(string name)
+        => Microsoft.Win32.Registry.GetValue(Path, name, null);
+
     public void Dispose() => _key.Dispose();
 }
 #endif

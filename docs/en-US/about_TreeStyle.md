@@ -6,16 +6,20 @@ Customizing PSTree Output with TreeStyle.
 
 ## SHORT DESCRIPTION
 
-The `TreeStyle` class enables customization of the hierarchical output for `Get-PSTree` and `Get-PSTreeRegistry` cmdlets in the PSTree module.
+The `TreeStyle` class enables customization of the hierarchical output for `Get-PSTree` and `Get-PSTreeRegistry` cmdlets
+ in the PSTree module.
 
 ## LONG DESCRIPTION
 
-PSTree version 2.2.0 and later introduces support for coloring the hierarchical output of the `Get-PSTree` and `Get-PSTreeRegistry` cmdlets using the `TreeStyle` class. This class provides a subset of features similar to those in PowerShell’s built-in [PSStyle][1].
-You can access the singleton instance of `TreeStyle` through either the [Get-PSTreeStyle][2] cmdlet or the `[PSTree.Style.TreeStyle]::Instance` property:
+[__PSTree v2.2.0__](../../CHANGELOG.md#v220) and later introduces support for coloring the hierarchical output of the `Get-PSTree` and
+ `Get-PSTreeRegistry` cmdlets using the `TreeStyle` class. This class provides a subset of features similar to those in
+ PowerShell’s built-in [PSStyle][1].  
+You can access the singleton instance of `TreeStyle` through either the [Get-PSTreeStyle][2] cmdlet or the
+ `[PSTree.Style.TreeStyle]::Instance` property:
 
 <div>
   &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/TreeStyle.png" alt="TreeStyle" width="35%" height="35%">
+  <img src="../../assets/TreeStyle.png" alt="TreeStyle" width="50%">
 </div>
 
 The `TreeStyle` class offers methods for combining escape sequences and applying text accents, such as bold or italic. See the next section for additional details.
@@ -23,31 +27,29 @@ The `TreeStyle` class offers methods for combining escape sequences and applying
 Here are its members:
 
 ```powershell
-   TypeName: PSTree.Style.TreeStyle
+   ReflectedType: PSTree.Style.TreeStyle
 
-Name            MemberType Definition
-----            ---------- ----------
-CombineSequence Method     string CombineSequence(string left, string right)
-Equals          Method     bool Equals(System.Object obj)
-EscapeSequence  Method     string EscapeSequence(string vt)
-GetHashCode     Method     int GetHashCode()
-GetType         Method     type GetType()
-ResetSettings   Method     void ResetSettings()
-ToBold          Method     string ToBold(string vt)
-ToItalic        Method     string ToItalic(string vt)
-ToString        Method     string ToString()
-FileSystem      Property   PSTree.Style.FileSystemStyle FileSystem {get;}
-OutputRendering Property   PSTree.Style.OutputRendering OutputRendering {get;set;}
-Palette         Property   PSTree.Style.Palette Palette {get;}
-Registry        Property   PSTree.Style.RegistryStyle Registry {get;}
-Reset           Property   string Reset {get;}
+Name                  MemberType   Definition
+----                  ----------   ----------
+CombineSequence       Method       public string CombineSequence(string left, string right);
+ResetSettings         Method       public void ResetSettings();
+ToItalic              Method       public string ToItalic(string vt);
+ToBold                Method       public string ToBold(string vt);
+EscapeSequence        Method       public string EscapeSequence(string vt);
+OutputRendering       Property     public OutputRendering OutputRendering { get; set; }
+Palette               Property     public Palette Palette { get; }
+Reset                 Property     public string Reset { get; }
+RenderingStyle        Property     public RenderingStyle RenderingStyle { get; set; }
+Instance              Property     public static TreeStyle Instance { get; }
+FileSystem            Property     public FileSystemStyle FileSystem { get; }
+Registry              Property     public RegistryStyle Registry { get; }
 ```
 
 The `.EscapeSequence()` method reveals the escape sequence applied to generate specific colors or accents. For example:
 
 <div>
   &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/EscapeSequence.png" alt="TreeStyle" width="45%" height="45%">
+  <img src="../../assets/EscapeSequence.png" alt="TreeStyle" width="75%">
 </div>
 
 ## CUSTOMIZING OUTPUT
@@ -65,7 +67,7 @@ Consider the standard output of `Get-PSTree`:
 
 <div>
   &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/Get-PSTree.Before.png" alt="Get-PSTree.Before" width="45%" height="45%">
+  <img src="../../assets/Get-PSTree.Before.png" alt="Get-PSTree.Before" width="65%">
 </div>
 
 You can adjust the appearance by modifying the `PSTree.Style.FileSystemStyle` object. Here’s an example of how to apply customizations:
@@ -94,12 +96,12 @@ After applying these changes, re-running the same `Get-PSTree` command will disp
 
 <div>
   &nbsp;&nbsp;&nbsp;
-  <img src="../../assets/Get-PSTree.After.png" alt="Get-PSTree.After" width="45%" height="45%">
+  <img src="../../assets/Get-PSTree.After.png" alt="Get-PSTree.After" width="65%">
 </div>
 
 ### Get-PSTreeRegistry
 
-Starting with PSTree version 2.2.3, the [`Get-PSTreeRegistry`][6] cmdlet supports customizable coloring via the `PSTree.Style.RegistryStyle` object. This allows you to define colors for both `TreeRegistryKey` and `TreeRegistryValue` instances.
+Starting with [__PSTree v2.2.3__](../../CHANGELOG.md#v223), the [`Get-PSTreeRegistry`][6] cmdlet supports customizable coloring via the `PSTree.Style.RegistryStyle` object. This allows you to define colors for both `TreeRegistryKey` and `TreeRegistryValue` instances.
 
 - __TreeRegistryKey__: The color is set using the `.RegistryKey` property.
 - __TreeRegistryValue__: The color is controlled by the `.RegistryValueKind` property, a dictionary that maps [RegistryValueKind][4] types to color settings based on the `.Kind` property of each registry value.
