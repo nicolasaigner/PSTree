@@ -2,5 +2,8 @@ namespace PSTree.Style;
 
 public enum RenderingStyle
 {
-    Fancy
+    Fancy,
+    FancyRounded,
+    Classic,
+    ClassicRounded
 }

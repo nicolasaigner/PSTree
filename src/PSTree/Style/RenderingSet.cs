@@ -1,18 +1,25 @@
+using System;
+
 namespace PSTree.Style;
 
 internal readonly struct RenderingSet
 {
-    internal static RenderingSet Fancy = new("│   ", "├── ", "└── ");
+    private static readonly ValueTuple<string, string> s_fancyGroup = ("├── ", "│   ");
+    private static readonly ValueTuple<string, string> s_classicGroup = ("|-- ", "|   ");
 
+    internal static RenderingSet Fancy = new("└── ", true);
+    internal static RenderingSet FancyRounded = new("╰── ", true);
+    internal static RenderingSet Classic = new("+-- ", false);
+    internal static RenderingSet ClassicRounded = new("`-- ", false);
+
+    internal readonly string Corner;
     internal readonly string Space = "    ";
-    internal readonly string Vertical;
     internal readonly string Branch;
-    internal readonly string LastBranch;
+    internal readonly string Vertical;
 
-    private RenderingSet(string vertical, string branch, string lastBranch)
+    private RenderingSet(string corner, bool isFancy)
     {
-        Vertical = vertical;
-        Branch = branch;
-        LastBranch = lastBranch;
+        Corner = corner;
+        (Branch, Vertical) = isFancy ? s_fancyGroup : s_classicGroup;
     }
 }

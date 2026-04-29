@@ -68,7 +68,7 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
                 for (int lev = 1; lev < dp; lev++)
                     builder.Append(continues[lev] ? set.Vertical : set.Space);
 
-                builder.Append(isLast ? set.LastBranch : set.Branch);
+                builder.Append(isLast ? set.Corner : set.Branch);
                 continues[dp] = !isLast;
             }
 

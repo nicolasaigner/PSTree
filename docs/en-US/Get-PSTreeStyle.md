@@ -22,7 +22,7 @@ Get-PSTreeStyle
 
 The `Get-PSTreeStyle` cmdlet provides access to the `TreeStyle` instance that controls the rendering and customization of output for the `Get-PSTree` and `Get-PSTreeRegistry` cmdlets.
 
-For details, see [__about_TreeStyle__](./about_TreeStyle.md).
+To Customize output rendering, see [__about_TreeStyle__](about_TreeStyle.md).
 
 ## EXAMPLES
 
@@ -47,3 +47,16 @@ This cmdlet supports the common parameters. For more information, see [about_Com
 ## OUTPUTS
 
 ### TreeStyle
+
+## NOTES
+
+Modifying the properties of this object (such as colors for files, folders, registry keys, etc.) will immediately affect the
+visual output of `Get-PSTree` and `Get-PSTreeRegistry` in the current PowerShell session.
+
+## RELATED LINKS
+
+[__`Get-PSTree`__](Get-PSTree.md)
+
+[__`Get-PSTreeRegistry`__](Get-PSTreeRegistry.md)
+
+[__about_TreeStyle__](about_TreeStyle.md)

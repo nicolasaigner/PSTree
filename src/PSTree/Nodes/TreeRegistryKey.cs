@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using Microsoft.Win32;
 using PSTree.Extensions;
@@ -69,8 +68,7 @@ public sealed class TreeRegistryKey : TreeRegistryBase, IDisposable
 #endif
 
     internal bool TryAddSubKey(
-        string name,
-        string source,
+        string name, string source,
         [NotNullWhen(true)] out TreeRegistryKey? treeKey)
     {
         treeKey = null;
@@ -89,7 +87,11 @@ public sealed class TreeRegistryKey : TreeRegistryBase, IDisposable
     internal void AddValue(string value, string source)
         => AddChild(new TreeRegistryValue(this, value, source, Depth + 1));
 
-    internal RegistryValueKind GetValueKind(string value) => _key.GetValueKind(value);
+    internal RegistryValueKind GetValueKind(string value)
+        => _key.GetValueKind(value);
+
+    internal object? GetValue(string name)
+        => Microsoft.Win32.Registry.GetValue(Path, name, null);
 
     public void Dispose() => _key.Dispose();
 }
