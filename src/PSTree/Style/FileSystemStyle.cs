@@ -38,7 +38,7 @@ public sealed class FileSystemStyle
     {
         get;
         set => field = TreeStyle.ThrowIfInvalidSequence(value);
-    } = "\x1B[97;3m";
+    } = "\x1B[37;3m";
 
     public Extension Extension { get; } = new();
 

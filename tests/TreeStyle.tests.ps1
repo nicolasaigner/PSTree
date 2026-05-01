@@ -68,6 +68,12 @@ Describe 'FileSystemStyle Type' {
         { $style.FileSystem.Executable = $style.Palette.Background.BrightGreen } | Should -Not -Throw
     }
 
+    It 'Summary property can be set' {
+        $style.FileSystem.Summary | Should -Not -BeNullOrEmpty
+        { $style.FileSystem.Summary = 'Invalid' } | Should -Throw
+        { $style.FileSystem.Summary = $style.Palette.Background.BrightGreen } | Should -Not -Throw
+    }
+
     It 'OutputRendering defines if output is colored' {
         $style.OutputRendering = [PSTree.Style.OutputRendering]::Host
 
