@@ -86,7 +86,7 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
 
     protected override void BeginProcessing()
     {
-        if (Recurse && !MyInvocation.BoundParameters.ContainsKey(nameof(Depth)))
+        if (Recurse && !MyInvocation.Uses(nameof(Depth)))
             Depth = int.MaxValue;
 
         const WildcardOptions options = WildcardOptions.Compiled
@@ -112,7 +112,7 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
 
         foreach (string path in _paths ?? [SessionState.Path.CurrentLocation.Path])
         {
-            if (MyInvocation.BoundParameters.ContainsKey(nameof(LiteralPath)))
+            if (MyInvocation.Uses(nameof(LiteralPath)))
             {
                 string resolved = SessionState.Path.GetUnresolvedProviderPathFromPSPath(
                     path: path,
@@ -177,9 +177,12 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
         return false;
     }
 
-
-    protected bool ShouldInclude(string item) =>
-        !HasInclude || MatchAny(item, _includePatterns!);
+    protected bool ShouldInclude(string item)
+    {
+        if (!HasInclude) return true;
+        Poly.Assert(_includePatterns is not null);
+        return MatchAny(item, _includePatterns);
+    }
 
     protected bool ShouldExclude(string item) =>
         _excludePatterns is not null && MatchAny(item, _excludePatterns);
