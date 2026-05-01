@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using PSTree.Interfaces;
 using PSTree.Nodes;
@@ -24,11 +25,12 @@ internal static class TreeFormattingExtension
             {
                 TreeDirectory dir => builder.GetStyledName(dir),
                 TreeFile file => builder.GetStyledName(file),
+                TreeSummary summary => builder.GetStyledName(summary),
 #if WINDOWS
                 TreeRegistryKey key => builder.GetStyledName(key),
                 TreeRegistryValue value => builder.GetStyledName(value),
 #endif
-                _ => builder.Append(tree.Name).ToString()
+                _ => throw new ArgumentOutOfRangeException(nameof(tree))
             };
 
         private string GetStyledName(TreeDirectory directory)
@@ -68,6 +70,20 @@ internal static class TreeFormattingExtension
 
             return builder
                 .Append(file.Name)
+                .ToString();
+        }
+
+        private string GetStyledName(TreeSummary summary)
+        {
+            if (Style.ColoringDisabled)
+                return builder
+                    .Append(summary.Name)
+                    .ToString();
+
+            return builder
+                .Append(FileSystemStyle.Summary)
+                .Append(summary.Name)
+                .Append(Reset)
                 .ToString();
         }
 

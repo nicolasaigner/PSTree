@@ -2,7 +2,7 @@ namespace PSTree.Nodes;
 
 public sealed class TreeSummary : TreeFileSystemInfo
 {
-    public override string Mode { get; } = "TBD";
+    public override string Mode { get; } = "-----";
 
     public override string Name { get; }
 

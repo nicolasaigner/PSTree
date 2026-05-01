@@ -34,6 +34,12 @@ public sealed class FileSystemStyle
         set => field = TreeStyle.ThrowIfInvalidSequence(value);
     } = "\x1B[32;1m";
 
+    public string Summary
+    {
+        get;
+        set => field = TreeStyle.ThrowIfInvalidSequence(value);
+    } = "\x1B[97;3m";
+
     public Extension Extension { get; } = new();
 
     internal bool IsExecutable(TreeFile file) => _exec.Contains(file.Extension);
