@@ -89,6 +89,9 @@ Describe 'FileSystemStyle Type' {
 
         Get-PSTree $TestDrive -Recurse -Include *.ps1, *.exe | ForEach-Object Hierarchy |
             Should -Not -Match '\b\x1B\[(?:[0-9]+;?){1,}m'
+
+        Get-PSTree $TestDrive -Top 2 | ForEach-Object Hierarchy |
+            Should -Not -Match '\b\x1B\[(?:[0-9]+;?){1,}m'
     }
 }
 

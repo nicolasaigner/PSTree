@@ -43,13 +43,11 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
         if (this is TreeSummary)
             return true;
 
-        if (Container?.Children is not { Count: > 0 } children)
-            return true;
-
+        return Container?.Children is { Count: > 0 } children &&
 #if NET8_0_OR_GREATER
-        return ReferenceEquals(this, children[^1]);
+            ReferenceEquals(this, children[^1]);
 #else
-        return ReferenceEquals(this, children[children.Count - 1]);
+            ReferenceEquals(this, children[children.Count - 1]);
 #endif
     }
 

@@ -1,5 +1,6 @@
 #if WINDOWS
 using Microsoft.Win32;
+using PSTree.CodeAnalysis;
 
 namespace PSTree.Nodes;
 
@@ -36,6 +37,10 @@ public sealed class TreeRegistryValue : TreeRegistryBase
     private static string GetNameOrDefault(string name)
         => string.IsNullOrEmpty(name) ? "(Default)" : name;
 
-    public object? GetValue() => Container!.GetValue(_name);
+    public object? GetValue()
+    {
+        Poly.Assert(Container is not null);
+        return Container.GetValue(_name);
+    }
 }
 #endif

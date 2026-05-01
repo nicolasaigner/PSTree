@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
+using PSTree.CodeAnalysis;
 using PSTree.Extensions;
 using PSTree.Nodes;
 
@@ -175,6 +176,7 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
 
         return false;
     }
+
 
     protected bool ShouldInclude(string item) =>
         !HasInclude || MatchAny(item, _includePatterns!);

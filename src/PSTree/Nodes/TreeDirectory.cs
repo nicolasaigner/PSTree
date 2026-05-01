@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using PSTree.CodeAnalysis;
 
 namespace PSTree.Nodes;
 
@@ -53,15 +54,14 @@ public sealed class TreeDirectory : TreeFileSystemInfo<DirectoryInfo>
 
     internal void Truncate(int top)
     {
-        if (Children is not { Count: > 0 } children) return;
-
-        int remove = children.Count - top;
+        Poly.Assert(Children is not null && top > Children.Count);
+        int remove = Children.Count - top;
         int dCount = 0, fCount = 0;
         long totalLength = 0;
 
-        for (int i = top; i < children.Count; i++)
+        for (int i = top; i < Children.Count; i++)
         {
-            TreeFileSystemInfo current = children[i];
+            TreeFileSystemInfo current = Children[i];
 
             if (current.IsContainer) dCount++;
             else fCount++;
@@ -74,7 +74,7 @@ public sealed class TreeDirectory : TreeFileSystemInfo<DirectoryInfo>
             Length = totalLength
         };
 
-        children.RemoveRange(top, remove);
-        children.Add(summary);
+        Children.RemoveRange(top, remove);
+        Children.Add(summary);
     }
 }
