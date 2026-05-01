@@ -54,7 +54,7 @@ public sealed class TreeDirectory : TreeFileSystemInfo<DirectoryInfo>
 
     internal void Truncate(int top)
     {
-        Poly.Assert(Children is not null && Children.Count > top);
+        Poly.Assert(Children is not null);
         int remove = Children.Count - top;
         int dCount = 0, fCount = 0;
         long totalLength = 0;

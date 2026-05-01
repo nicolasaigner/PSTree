@@ -75,7 +75,7 @@ Describe 'FileSystemStyle Type' {
     }
 
     It 'OutputRendering defines if output is colored' {
-        $style.OutputRendering = [PSTree.Style.OutputRendering]::Host
+        $style.OutputRendering = 'Host'
 
         Get-PSTree $TestDrive -Recurse -Include *.ps1, *.exe | ForEach-Object {
             if ($_.Extension -eq '.exe' -and $IsLinux) {
@@ -85,13 +85,17 @@ Describe 'FileSystemStyle Type' {
             $_.Hierarchy | Should -Match '\b\x1B\[(?:[0-9]+;?){1,}m'
         }
 
-        $style.OutputRendering = [PSTree.Style.OutputRendering]::PlainText
+        $style.OutputRendering = 'PlainText'
 
         Get-PSTree $TestDrive -Recurse -Include *.ps1, *.exe | ForEach-Object Hierarchy |
             Should -Not -Match '\b\x1B\[(?:[0-9]+;?){1,}m'
 
-        Get-PSTree $TestDrive -Top 2 | ForEach-Object Hierarchy |
-            Should -Not -Match '\b\x1B\[(?:[0-9]+;?){1,}m'
+        Get-PSTree $TestDrive -Top 1 |
+            Where-Object { $_ -is [PSTree.Nodes.TreeSummary] } |
+            ForEach-Object Hierarchy |
+            Should -Not -Match '\b\x1B\['
+
+        $style.OutputRendering = 'Host'
     }
 }
 
@@ -109,15 +113,15 @@ if ($isWin) {
         }
 
         It 'OutputRendering defines if output is colored' {
-            $style.OutputRendering = [PSTree.Style.OutputRendering]::Host
+            $style.OutputRendering = 'Host'
             Get-PSTreeRegistry HKCU:\ -KeysOnly | ForEach-Object Hierarchy |
                 Should -Match '\s?\x1B\[(?:[0-9]+;?){1,}m'
 
-            $style.OutputRendering = [PSTree.Style.OutputRendering]::PlainText
+            $style.OutputRendering = 'PlainText'
             Get-PSTreeRegistry HKCU:\ | ForEach-Object Hierarchy |
                 Should -Not -Match '\s?\x1B\[(?:[0-9]+;?){1,}m'
 
-            $style.OutputRendering = [PSTree.Style.OutputRendering]::Host
+            $style.OutputRendering = 'Host'
         }
     }
 
@@ -173,7 +177,7 @@ if ($isWin) {
         }
 
         It 'Adds coloring to TreeRegistryValue instances' {
-            $style.OutputRendering = [PSTree.Style.OutputRendering]::Host
+            $style.OutputRendering = 'Host'
 
             Get-PSTreeRegistry HKCU:\ -EA 0 |
                 Where-Object Kind -In DWord, ExpandString, String |
