@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using PSTree.CodeAnalysis;
 using PSTree.Extensions;
 using PSTree.Interfaces;
 using PSTree.Style;
@@ -43,7 +44,10 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
         if (this is TreeSummary)
             return true;
 
-        return Container?.Children is { Count: > 0 } children &&
+        // Called only when dp > 0, Container cannot be null in that case
+        Poly.Assert(Container is not null);
+
+        return Container.Children is { Count: > 0 } children &&
 #if NET8_0_OR_GREATER
             ReferenceEquals(this, children[^1]);
 #else
