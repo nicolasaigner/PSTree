@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using PSTree.Interfaces;
 using PSTree.Nodes;
@@ -29,7 +28,7 @@ internal static class TreeFormattingExtension
                 TreeRegistryKey key => builder.GetStyledName(key),
                 TreeRegistryValue value => builder.GetStyledName(value),
 #endif
-                _ => throw new ArgumentOutOfRangeException(nameof(tree))
+                _ => builder.Append(tree.Name).ToString()
             };
 
         private string GetStyledName(TreeDirectory directory)

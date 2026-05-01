@@ -39,16 +39,21 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
     string ITree.Name { get => Name; }
 
     private bool IsLast()
-        => Container?.Children is { Count: > 0 } children
-#if NET8_0_OR_GREATER
-            && ReferenceEquals(this, children[^1]);
-#else
-            && ReferenceEquals(this, children[children.Count - 1]);
-#endif
+    {
+        if (this is TreeSummary)
+            return true;
 
-    internal IEnumerable<ITree> Render(
-        int maxDepth,
-        IComparer<TBase>? comparer)
+        if (Container?.Children is not { Count: > 0 } children)
+            return true;
+
+#if NET8_0_OR_GREATER
+        return ReferenceEquals(this, children[^1]);
+#else
+        return ReferenceEquals(this, children[children.Count - 1]);
+#endif
+    }
+
+    internal IEnumerable<ITree> Render(int maxDepth)
     {
         RenderingSet set = TreeStyle.Instance.RenderingSet;
         bool[] continues = new bool[maxDepth + 1];
@@ -78,9 +83,6 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
             if (current.Children is not { Count: > 0 } children)
                 continue;
 
-            if (comparer is not null)
-                children.Sort(comparer);
-
             for (int i = children.Count - 1; i >= 0; i--)
                 stack.Push(children[i]);
         }
@@ -92,24 +94,32 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
         Children.Add(child);
     }
 
-    internal void PruneNonIncluded()
+    internal void Consolidate(
+        IComparer<TBase>? comparer,
+        int top, bool prune)
     {
         if (Children is not { Count: > 0 } children)
             return;
 
         for (int i = children.Count - 1; i >= 0; i--)
         {
-            if (children[i] is TContainer container)
-            {
-                container.PruneNonIncluded();
+            if (children[i] is not TContainer container)
+                continue;
 
-                if (container.Include) continue;
-                if (container is TreeDirectory dir)
-                    dir.RecursiveDecrement();
+            container.Consolidate(comparer, top, prune);
 
-                children.RemoveAt(i);
-            }
+            if (!prune || container.Include) continue;
+            if (container is TreeDirectory dir)
+                dir.RecursiveDecrement();
+
+            children.RemoveAt(i);
         }
+
+        if (comparer is not null)
+            children.Sort(comparer);
+
+        if (top > 0 && children.Count > top && this is TreeDirectory tree)
+            tree.Truncate(top);
     }
 
     internal void PropagateInclude()

@@ -50,4 +50,31 @@ public sealed class TreeDirectory : TreeFileSystemInfo<DirectoryInfo>
             i.TotalItemCount += ItemCount;
         }
     }
+
+    internal void Truncate(int top)
+    {
+        if (Children is not { Count: > 0 } children) return;
+
+        int remove = children.Count - top;
+        int dCount = 0, fCount = 0;
+        long totalLength = 0;
+
+        for (int i = top; i < children.Count; i++)
+        {
+            TreeFileSystemInfo current = children[i];
+
+            if (current.IsContainer) dCount++;
+            else fCount++;
+
+            totalLength += current.Length;
+        }
+
+        TreeSummary summary = new(this, dCount, fCount)
+        {
+            Length = totalLength
+        };
+
+        children.RemoveRange(top, remove);
+        children.Add(summary);
+    }
 }

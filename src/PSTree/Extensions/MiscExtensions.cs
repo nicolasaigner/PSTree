@@ -1,5 +1,5 @@
-#if WINDOWS
 using System.IO;
+using System.Management.Automation;
 using Microsoft.Win32;
 using PSTree.Nodes;
 
@@ -7,6 +7,13 @@ namespace PSTree.Extensions;
 
 internal static class MiscExtensions
 {
+    extension(InvocationInfo invocation)
+    {
+        internal bool Uses(string parameter)
+            => invocation.BoundParameters.ContainsKey(parameter);
+    }
+
+#if WINDOWS
     extension(string[] values)
     {
         internal void Deconstruct(out string baseKey, out string? subKey)
@@ -15,12 +22,6 @@ internal static class MiscExtensions
             subKey = values.Length == 1 ? null : values[1];
         }
     }
-
-    extension(string value)
-    {
-
-    }
-
 
     extension(RegistryKey registryKey)
     {
@@ -43,5 +44,5 @@ internal static class MiscExtensions
     {
         internal string JoinPath(string leaf) => Path.Combine(treeKey.Path, leaf);
     }
-}
 #endif
+}

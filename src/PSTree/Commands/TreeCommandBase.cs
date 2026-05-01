@@ -19,6 +19,8 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
 
     private readonly Stack<TContainer> _stack = new(32);
 
+    private IComparer<TBase>? _comparer;
+
     private WildcardPattern[]? _excludePatterns;
 
     private WildcardPattern[]? _includePatterns;
@@ -29,9 +31,7 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
 
     protected const string LiteralPathSet = "LiteralPath";
 
-    protected bool WithInclude { get; private set; }
-
-    protected string CurrentSource { get; private set; } = null!;
+    protected bool HasInclude { get; private set; }
 
     [Parameter(
         ParameterSetName = PathSet,
@@ -81,6 +81,8 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
     [Alias("sb")]
     public TSort SortBy { get; set; }
 
+    public virtual int Top { get; set; }
+
     protected override void BeginProcessing()
     {
         if (Recurse && !MyInvocation.BoundParameters.ContainsKey(nameof(Depth)))
@@ -96,8 +98,10 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
         if (Include is not null)
         {
             _includePatterns = [.. Include.Select(e => new WildcardPattern(e, options))];
-            WithInclude = true;
+            HasInclude = true;
         }
+
+        _comparer = GetComparer();
     }
 
     protected IEnumerable<(ProviderInfo, string)> EnumerateResolvedPaths()
@@ -136,7 +140,6 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
     protected void ProcessTree(TContainer container)
     {
         int depth, maxdp = 0;
-        CurrentSource = container.Source;
         Push(container);
 
         while (!_canceled && _stack.Count > 0)
@@ -147,11 +150,10 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
             BuildOne(current, depth);
         }
 
-        IComparer<TBase>? comparer = GetComparer();
-        if (WithInclude) container.PruneNonIncluded();
+        container.Consolidate(_comparer, Top, HasInclude);
 
         WriteObject(
-            container.Render(maxdp, comparer),
+            container.Render(maxdp),
             enumerateCollection: true);
     }
 
@@ -175,7 +177,7 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
     }
 
     protected bool ShouldInclude(string item) =>
-        !WithInclude || MatchAny(item, _includePatterns!);
+        !HasInclude || MatchAny(item, _includePatterns!);
 
     protected bool ShouldExclude(string item) =>
         _excludePatterns is not null && MatchAny(item, _excludePatterns);

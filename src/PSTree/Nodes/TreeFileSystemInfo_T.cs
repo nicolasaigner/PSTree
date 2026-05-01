@@ -14,7 +14,7 @@ public abstract class TreeFileSystemInfo<T>(T fsinfo, string source, int depth =
 
     public override string Name { get => Instance.Name; }
 
-    public string Mode { get => FileSystemProvider.Mode(InstanceAsPSO); }
+    public override string Mode { get => FileSystemProvider.Mode(InstanceAsPSO); }
 
     public string FullName { get => Instance.FullName; }
 
