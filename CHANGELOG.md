@@ -380,20 +380,20 @@ d----     └── Format                     1.83 Kb
 - `Type` property has been added to the output object and is now part of the _Default MemberSet_.
 
 [1]: https://github.com/santisq/PSTree/issues/9
-[2]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.getdirectories?view=net-6.0
-[3]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.getfiles?view=net-6.0
+[2]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.getdirectories
+[3]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.getfiles
 [4]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-childitem
-[5]: https://docs.microsoft.com/en-us/dotnet/api/system.collections.stack?view=net-6.0
+[5]: https://docs.microsoft.com/en-us/dotnet/api/system.collections.stack
 [6]: https://github.com/IISResetMe
-[7]: https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.stack-1?view=net-6.0
-[8]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo?view=net-6.0
-[9]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo.getfiles?view=net-6.0#system-io-directoryinfo-getfiles
-[10]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo.getdirectories?view=net-6.0#system-io-directoryinfo-getdirectories
-[11]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo.enumeratefilesysteminfos?view=net-6.0#system-io-directoryinfo-enumeratefilesysteminfos
+[7]: https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.stack-1
+[8]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo
+[9]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo.getfiles#system-io-directoryinfo-getfiles
+[10]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo.getdirectories#system-io-directoryinfo-getdirectories
+[11]: https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo.enumeratefilesysteminfos#system-io-directoryinfo-enumeratefilesysteminfos
 [12]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_format.ps1xml?view=powershell-7.2&viewFallbackFrom=powershell-6
 [13]: PSTree/PSTree.Format.ps1xml
-[14]: https://learn.microsoft.com/en-us/dotnet/api/system.io.filesysteminfo.tostring?view=net-7.0#system-io-filesysteminfo-tostring
-[15]: https://learn.microsoft.com/en-us/dotnet/api/system.io.filesysteminfo.refresh?view=net-7.0#system-io-filesysteminfo-refresh
+[14]: https://learn.microsoft.com/en-us/dotnet/api/system.io.filesysteminfo.tostring#system-io-filesysteminfo-tostring
+[15]: https://learn.microsoft.com/en-us/dotnet/api/system.io.filesysteminfo.refresh#system-io-filesysteminfo-refresh
 [16]: https://app.codecov.io/gh/santisq/PSTree
 [17]: https://github.com/SeeminglyScience/
 [18]: https://github.com/jborean93/

@@ -197,4 +197,21 @@ Describe 'Get-PSTree' {
             Get-PSTree -SortBy $_ -Depth 1 | Should -Not -BeNullOrEmpty
         }
     }
+
+    It 'Supports Top' {
+        Get-PSTree -Top 2 |
+            ForEach-Object GetType |
+            Should -Contain ([PSTree.Nodes.TreeSummary])
+    }
+
+    It 'Supports Top with SortBy DirectoriesFirstBySize' {
+        Get-PSTree -Top 2 -SortBy DirectoriesFirstBySize |
+            ForEach-Object GetType |
+            Should -Contain ([PSTree.Nodes.TreeSummary])
+    }
+
+    It 'Should throw if Top used with incompatible sort mode' {
+        { Get-PSTree -Top 2 -SortBy FilesFirst } |
+            Should -Throw -ExceptionType ([System.InvalidOperationException])
+    }
 }

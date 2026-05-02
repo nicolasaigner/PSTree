@@ -23,6 +23,7 @@ Get-PSTreeRegistry
     [-KeysOnly]
     [-Exclude <String[]>]
     [-Include <String[]>]
+    [-SortBy <RegistrySortMode>]
     [<CommonParameters>]
 ```
 
@@ -36,6 +37,7 @@ Get-PSTreeRegistry
     [-KeysOnly]
     [-Exclude <String[]>]
     [-Include <String[]>]
+    [-SortBy <RegistrySortMode>]
     [<CommonParameters>]
 ```
 
@@ -65,7 +67,7 @@ This example restricts output to keys only (no values) and limits the depth to 2
 
 ```powershell
 PS \> $items = Get-PSTreeRegistry HKCU:\Environment\ -Depth 2
-PS \> $values = $items | Where-Object { $_ -is [PSTree.TreeRegistryValue] }
+PS \> $values = $items | Where-Object { $_ -is [PSTree.Nodes.TreeRegistryValue] }
 PS \> $values
 
    Hive: HKEY_CURRENT_USER\Environment
@@ -168,6 +170,7 @@ Accept wildcard characters: False
 Specifies the literal registry paths to traverse, without wildcard expansion. This parameter accepts input from the pipeline by property name (using the `PSPath` alias). Use this for exact path matching, bypassing wildcard interpretation.  
 
 > [!TIP]
+>
 > For registry base keys not mapped as PowerShell drives (e.g., `HKCU:\` and `HKLM:\`), you can use the provider path format by prefixing the path with `Registry::`. For example, to traverse all keys under `HKEY_USERS` exactly as specified, use: `Get-PSTreeRegistry -LiteralPath Registry::HKEY_USERS`.
 
 ```yaml
@@ -187,6 +190,7 @@ Accept wildcard characters: False
 Specifies the registry paths to traverse. Accepts one or more registry paths (e.g., `HKLM:\Software`, `HKCU:\Software`), which can include [wildcard characters](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_wildcards?view=powershell-7.5). This parameter can accept input from the pipeline. Paths are resolved using [PowerShell's registry provider](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_registry_provider?view=powershell-7.5).  
 
 > [!TIP]
+>
 > For registry base keys not mapped as PowerShell drives (e.g., `HKCU:\` and `HKLM:\`), you can use the provider path format by prefixing the path with `Registry::`. For example, to traverse each key under `HKEY_USERS`, use: `Get-PSTreeRegistry -Path Registry::HKEY_USERS\*`.
 
 ```yaml
@@ -274,6 +278,7 @@ __Valid values:__
 - `None` — No sorting is performed (maximum performance). Items appear in the order they were discovered.
 
 > [!TIP]
+>
 > Use `-SortBy None` when performance is critical and the natural discovery order is sufficient.
 
 ```yaml
@@ -301,11 +306,11 @@ Output from cmdlets that return `Microsoft.Win32.RegistryKey` objects (e.g., `Ge
 
 ## OUTPUTS
 
-### PSTree.TreeRegistryKey
+### PSTree.Nodes.TreeRegistryKey
 
 Returns objects of type `TreeRegistryKey` representing registry keys in a hierarchical structure. If `-KeysOnly` is specified, only `TreeRegistryKey` objects are returned; otherwise, `TreeRegistryValue` objects may also be included, but the primary output type remains `TreeRegistryKey` for consistency with the tree-like organization.
 
-### PSTree.TreeRegistryValue
+### PSTree.Nodes.TreeRegistryValue
 
 Returns objects of type `TreeRegistryValue` representing registry values associated with keys, included in the output unless the `-KeysOnly` parameter is specified. Each object includes properties such as `Name`, `Kind`, and `Depth`, allowing access to value data (e.g., via the `.GetValue()` method). These objects are nested under `TreeRegistryKey` objects in the hierarchical output, providing detailed value information for registry exploration.
 
@@ -315,7 +320,7 @@ This cmdlet is Windows-only and requires PowerShell 5.1 or later. It may require
 
 ## RELATED LINKS
 
-[__Microsoft.Win32 Namespace__](https://learn.microsoft.com/en-us/dotnet/api/microsoft.win32?view=net-9.0)
+[__Microsoft.Win32 Namespace__](https://learn.microsoft.com/en-us/dotnet/api/microsoft.win32)
 
 [__about_Registry_Provider__](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_registry_provider?view=powershell-7.5)
 

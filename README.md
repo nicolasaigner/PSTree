@@ -64,19 +64,19 @@ Set-Location ./PSTree
 #### Get the current directory tree with default parameters values
 
 ```powershell
-PS \> Get-PSTree | Select-Object -First 20
+PS \> Get-PSTree
 
-   Source: C:\User\Documents\PSTree
+   Source: D:\pwsh\PSTree
 
 Mode            Length Hierarchy
 ----            ------ ---------
-d----         36.78 KB PSTree
--a---          4.75 KB ├── .gitignore        
+d----         37.54 KB PSTree
+-a---          4.75 KB ├── .gitignore
 -a---        137.00  B ├── .markdownlint.json
 -a---          1.37 KB ├── build.ps1
--a---         19.34 KB ├── CHANGELOG.md
+-a---         19.73 KB ├── CHANGELOG.md
 -a---          1.07 KB ├── LICENSE
--a---         10.12 KB ├── README.md
+-a---         10.48 KB ├── README.md
 d----          0.00  B ├── .github
 d----          4.10 KB │   └── workflows
 -a---          4.10 KB │       └── ci.yml
@@ -85,98 +85,129 @@ d----          4.18 KB ├── .vscode
 -a---          1.39 KB │   ├── launch.json
 -a---          1.09 KB │   ├── settings.json
 -a---          1.43 KB │   └── tasks.json
-d----        266.71 KB ├── assets
--a---         10.00 KB │   ├── EscapeSequence.png
--a---         78.08 KB │   ├── Get-PSTree.After.png
--a---         73.89 KB │   ├── Get-PSTree.Before.png
--a---         34.54 KB │   ├── Get-PSTreeRegistry.After.png
+d----        491.24 KB ├── assets
+-a---         95.47 KB │   ├── ClassicStyles.png
+-a---         96.12 KB │   ├── FancyStyles.png
+-a---         66.76 KB │   ├── Get-PSTree.After.png
+-a---         63.05 KB │   ├── Get-PSTree.Before.png
+...
 ```
 
 #### Excludes items starting with `.g`, `.v`, `.m` and `assets`
 
 ```powershell
-PS \> Get-PSTree -Exclude .[gvm]*, assets | Select-Object -First 20
+PS \> Get-PSTree -Exclude .[gvm]*, assets
 
-   Source: C:\User\Documents\PSTree
+   Source: D:\pwsh\PSTree
 
 Mode            Length Hierarchy
 ----            ------ ---------
-d----         31.90 KB PSTree
--a---          1.37 KB ├── build.ps1   
--a---         19.34 KB ├── CHANGELOG.md
+d----         32.65 KB PSTree
+-a---          1.37 KB ├── build.ps1
+-a---         19.73 KB ├── CHANGELOG.md
 -a---          1.07 KB ├── LICENSE
--a---         10.12 KB ├── README.md
+-a---         10.48 KB ├── README.md
 d----          0.00  B ├── docs
-d----         31.99 KB │   └── en-US
--a---          7.25 KB │       ├── about_TreeStyle.md
--a---         13.25 KB │       ├── Get-PSTree.md
--a---         10.49 KB │       ├── Get-PSTreeRegistry.md
--a---          1.00 KB │       └── Get-PSTreeStyle.md
-d----         22.10 KB ├── module
--a---         17.08 KB │   ├── PSTree.Format.ps1xml
--a---          5.01 KB │   └── PSTree.psd1
-d----        513.42 KB ├── output
--a---         22.70 KB │   ├── PSTree.2.1.11.nupkg
--a---         24.21 KB │   ├── PSTree.2.1.12.nupkg
--a---         24.22 KB │   ├── PSTree.2.1.13.nupkg
--a---         24.42 KB │   ├── PSTree.2.1.14.nupkg
--a---         25.07 KB │   ├── PSTree.2.1.15.nupkg
+d----         36.81 KB │   └── en-US
+-a---          6.68 KB │       ├── about_TreeStyle.md
+-a---         16.90 KB │       ├── Get-PSTree.md
+-a---         11.84 KB │       ├── Get-PSTreeRegistry.md
+-a---          1.39 KB │       └── Get-PSTreeStyle.md
+d----         22.39 KB ├── module
+-a---         17.25 KB │   ├── PSTree.Format.ps1xml
+-a---          5.14 KB │   └── PSTree.psd1
+d----        106.22 KB ├── output
+-a---        106.22 KB │   ├── PSTree.3.0.0.nupkg
+d----          0.00  B │   ├── PSTree
+d----          0.00  B │   │   └── 3.0.0
+d----        277.39 KB │   └── TestResults
+-a---        249.51 KB │       ├── Coverage.xml
+...
 ```
 
-#### Includes `.ps1` and `.cs` files and excludes `tools` folder
+#### Includes `.ps1` and `.cs` files, excludes `tools` folder and sorts items by size
 
 ```powershell
-PS \> Get-PStree -Include *.ps1, *.cs -Exclude tools
+PS \> Get-PSTree -Depth 4 -Include *.ps1, *.cs -Exclude tools -SortBy Size
 
-   Source: C:\User\Documents\PSTree
+   Source: D:\pwsh\PSTree
 
 Mode            Length Hierarchy
 ----            ------ ---------
 d----          1.37 KB PSTree
+d----         29.54 KB ├── tests
+-a---          9.29 KB │   ├── TreeStyle.tests.ps1
+-a---          7.35 KB │   ├── GetPSTreeRegistryCommand.tests.ps1
+-a---          7.33 KB │   ├── GetPSTreeCommand.tests.ps1
+-a---          2.46 KB │   ├── TreeFileSystemInfo_T.tests.ps1
+-a---          1.59 KB │   ├── TreeDirectory.tests.ps1
+-a---        804.00  B │   ├── FormattingInternals.tests.ps1
+-a---        745.00  B │   └── TreeFile.tests.ps1
 -a---          1.37 KB ├── build.ps1
-d----          0.00  B ├── src
-d----         15.87 KB │   └── PSTree
--a---        839.00  B │       ├── Cache.cs
--a---        169.00  B │       ├── ITree.cs
--a---        674.00  B │       ├── RegistryMappings.cs
--a---          1.02 KB │       ├── TreeBase.cs
--a---          4.00 KB │       ├── TreeCommandBase.cs
--a---        438.00  B │       ├── TreeComparer.cs
--a---          2.27 KB │       ├── TreeDirectory.cs
--a---          1.30 KB │       ├── TreeFile.cs
--a---          1.68 KB │       ├── TreeFileSystemInfo_T.cs
--a---        311.00  B │       ├── TreeFileSystemInfo.cs
--a---        942.00  B │       ├── TreeRegistryBase.cs
--a---          1.10 KB │       ├── TreeRegistryKey.cs
--a---          1.21 KB │       └── TreeRegistryValue.cs
-d----         27.48 KB └── tests
--a---        985.00  B     ├── FormattingInternals.tests.ps1
--a---          6.13 KB     ├── GetPSTreeCommand.tests.ps1
--a---          6.44 KB     ├── GetPSTreeRegistryCommand.tests.ps1
--a---          1.77 KB     ├── TreeDirectory.tests.ps1
--a---        914.00  B     ├── TreeFile.tests.ps1
--a---          2.62 KB     ├── TreeFileSystemInfo_T.tests.ps1
--a---          8.67 KB     └── TreeStyle.tests.ps1
+d----          0.00  B └── src
+d----          0.00  B     └── PSTree
+d----         13.73 KB         ├── Nodes
+-a---          3.61 KB         │   ├── TreeBase.cs
+-a---          2.55 KB         │   ├── TreeRegistryKey.cs
+-a---          2.30 KB         │   ├── TreeDirectory.cs
+-a---          1.43 KB         │   ├── TreeFileSystemInfo_T.cs
+-a---          1.15 KB         │   ├── TreeRegistryValue.cs
+-a---        967.00  B         │   ├── TreeSummary.cs
+-a---        714.00  B         │   ├── TreeFileSystemInfo.cs
+...
 ```
 
 #### Get the recursive size of the folders
 
 ```powershell
-PS \> Get-PSTree .\src\ -Depth 2 -Directory -RecursiveSize
+PS \> Get-PSTree .\src -Depth 2 -Directory -RecursiveSize
 
-   Source: C:\User\Documents\PSTree\src
+   Source: D:\pwsh\PSTree\src
 
 Mode            Length Hierarchy
 ----            ------ ---------
-d----          1.04 MB src
-d----          1.04 MB └── PSTree
-d----        670.05 KB     ├── bin
-d----          7.53 KB     ├── CodeAnalysis
-d----         10.58 KB     ├── Commands
-d----          8.01 KB     ├── Extensions
-d----          1.29 KB     ├── Internal
-d----        341.03 KB     ├── obj
-d----         11.69 KB     └── Style
+d----          1.15 MB src
+d----          1.15 MB └── PSTree
+d----        732.37 KB     ├── bin
+d----          7.81 KB     ├── CodeAnalysis
+d----         13.17 KB     ├── Commands
+d----          6.51 KB     ├── Comparers
+d----          7.50 KB     ├── Extensions
+d----        331.00  B     ├── Interfaces
+d----        948.00  B     ├── Internal
+d----         13.73 KB     ├── Nodes
+d----        374.92 KB     ├── obj
+d----          2.35 KB     ├── Registry
+d----         12.53 KB     └── Style
+```
+
+#### Get the top N items at each level using `-Top`
+
+```powershell
+PS \> Get-PSTree .\src\PSTree -Top 3
+
+   Source: D:\pwsh\PSTree\src\PSTree
+
+Mode            Length Hierarchy
+----            ------ ---------
+d----          1.15 MB PSTree
+d----        732.37 KB ├── bin
+d----        732.37 KB │   └── Debug
+d----        502.91 KB │       ├── net472
+d----        229.46 KB │       └── net8.0
+d----        374.92 KB ├── obj
+d----        286.14 KB │   ├── Debug
+d----        198.00 KB │   │   ├── net8.0
+d----         88.14 KB │   │   └── net472
+-a---         79.42 KB │   ├── project.assets.json
+-a---          4.02 KB │   ├── project.nuget.cache
+-----          5.34 KB │   └── [+3 files]
+d----         13.73 KB ├── Nodes
+-a---          3.61 KB │   ├── TreeBase.cs
+-a---          2.55 KB │   ├── TreeRegistryKey.cs
+-a---          2.30 KB │   ├── TreeDirectory.cs
+-----          5.27 KB │   └── [+6 files]
+-----         52.69 KB └── [+8 folders, +1 file]
 ```
 
 ### `Get-PSTreeRegistry`
@@ -263,7 +294,7 @@ RegistryKey      └── Control
 
 ```powershell
 PS \> $items = Get-PSTreeRegistry HKCU:\Environment\ -Depth 2
-PS \> $values = $items | Where-Object { $_ -is [PSTree.TreeRegistryValue] }
+PS \> $values = $items | Where-Object { $_ -is [PSTree.Nodes.TreeRegistryValue] }
 PS \> $values
 
    Hive: HKEY_CURRENT_USER\Environment

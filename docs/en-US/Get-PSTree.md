@@ -25,6 +25,8 @@ Get-PSTree
     [-RecursiveSize]
     [-Exclude <String[]>]
     [-Include <String[]>]
+    [-SortBy <FileSystemSortMode>]
+    [-Top <Int32>]
     [<CommonParameters>]
 ```
 
@@ -40,6 +42,8 @@ Get-PSTree
     [-RecursiveSize]
     [-Exclude <String[]>]
     [-Include <String[]>]
+    [-SortBy <FileSystemSortMode>]
+    [-Top <Int32>]
     [<CommonParameters>]
 ```
 
@@ -72,6 +76,7 @@ PS \> Get-PSTree $HOME -Depth 2 -Force
 ```
 
 > [!TIP]
+>
 > The `-Force` switch is required to include hidden files and folders in the output. Additionally, hidden items contribute to folder sizes (including recursive sizes with [`-RecursiveSize`](#-recursivesize), if specified), ensuring a comprehensive view of disk usage.
 
 ### Example 4: Display the `C:\` Drive Tree, Limited to 2 Levels, Showing Only Directories with Recursive Sizes
@@ -102,6 +107,7 @@ PS \> Get-ChildItem -Directory | Get-PSTree
 ```
 
 > [!TIP]
+>
 > Output from cmdlets that work with the file system and return `System.IO.FileSystemInfo` objects (e.g., `Get-ChildItem`, `Get-Item`) can be piped to `Get-PSTree`. Pipeline input is bound to the `-LiteralPath` parameter if the objects have a `PSPath` property, enabling seamless traversal of multiple directory structures with default settings (depth of 3, no recursion unless specified).
 
 This example pipes the output of `Get-ChildItem` to `Get-PSTree`, retrieving the directory and file structure for each directory in the current location. It displays hierarchies with default depth (3 levels) and folder sizes, excluding hidden or system items unless [`-Force`](#-force) is used.
@@ -134,6 +140,19 @@ PS \> Get-PSTree -SortBy FilesFirstBySize
 # Disable sorting for best performance
 PS \> Get-PSTree -SortBy None
 ```
+
+### Example 9: Display only the largest items at each level using -Top
+
+```powershell
+PS \> Get-PSTree -Top 10
+PS \> Get-PSTree C:\Users -Top 5 -SortBy DirectoriesFirstBySize -Depth 4
+```
+
+This example displays only the 10 largest items (by size) at each directory level. A `TreeSummary` object is added at the end of each truncated directory showing the number of omitted folders/files and their total size.
+
+> [!TIP]
+>
+> The `-Top` parameter works best with size-based sorting and is very useful for quickly identifying the largest consumers of disk space without rendering the full tree.
 
 ## PARAMETERS
 
@@ -262,7 +281,7 @@ Accept wildcard characters: True
 
 ### -Recurse
 
-Enables recursive traversal of all subfolders under the specified path. Use this switch to explore the complete folder hierarchy, but note that it may impact performance on large directories—consider ][`-Depth`](#-depth) for smaller subsets.
+Enables recursive traversal of all subfolders under the specified path. Use this switch to explore the complete folder hierarchy, but note that it may impact performance on large directories—consider [`-Depth`](#-depth) for smaller subsets.
 
 ```yaml
 Type: SwitchParameter
@@ -326,6 +345,27 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Top
+
+Specifies the maximum number of items to display at each directory level (after sorting). When used, the cmdlet keeps only the top __N__ items per directory and appends a `TreeSummary` object with the count and total size of the omitted items.
+
+> [!IMPORTANT]
+>
+> - Using `-Top` automatically enables `-RecursiveSize` and sets `-SortBy Size` (unless another sort mode is explicitly provided).
+> - `-Top` only works with size-based sorting (`Size` or `DirectoriesFirstBySize`). Using it with other sort modes throws a terminating error.
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases: t
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 
 This cmdlet supports the common parameters. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
@@ -339,13 +379,22 @@ Output from cmdlets that return `System.IO.FileSystemInfo` objects (e.g., `Get-I
 
 ## OUTPUTS
 
-### PSTree.TreeDirectory
+### PSTree.Nodes.TreeDirectory
 
 Returns objects of type `TreeDirectory` representing directories in a hierarchical structure, with `TreeFile` objects included as children. Each `TreeDirectory` object includes properties such as `Name`, `FullName`, `Size`, and `Depth`, reflecting the file system organization and enabling size-based analysis. This prioritizes directories as the primary output type for tree navigation, with files nested within for comprehensive exploration.
 
-### PSTree.TreeFile
+### PSTree.Nodes.TreeFile
 
 Returns objects of type `TreeFile` representing files within directories, included in the output unless the `-Directory` parameter is specified. Each object includes properties such as `Name`, `FullName`, `Size`, and `Depth`, allowing detailed file analysis within the hierarchical structure. These objects are nested under `TreeDirectory` objects, supporting disk usage tracking and file system navigation.
+
+### PSTree.Nodes.TreeSummary
+
+A placeholder object added when the `-Top` parameter is used and a directory exceeds the specified number of items. It represents the truncated items by showing the count of omitted folders and files along with their combined size.
+
+__Main properties:__
+
+- `Name` — Summary string in the form `[+N folders, +M files]`, `[+N folders]`, or `[+M files]`
+- `Length` — Total size of all truncated items
 
 ## NOTES
 

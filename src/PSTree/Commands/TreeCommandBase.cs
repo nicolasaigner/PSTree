@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
+using PSTree.CodeAnalysis;
 using PSTree.Extensions;
 using PSTree.Nodes;
 
@@ -19,6 +20,8 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
 
     private readonly Stack<TContainer> _stack = new(32);
 
+    private IComparer<TBase>? _comparer;
+
     private WildcardPattern[]? _excludePatterns;
 
     private WildcardPattern[]? _includePatterns;
@@ -29,9 +32,7 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
 
     protected const string LiteralPathSet = "LiteralPath";
 
-    protected bool WithInclude { get; private set; }
-
-    protected string CurrentSource { get; private set; } = null!;
+    protected bool HasInclude { get; private set; }
 
     [Parameter(
         ParameterSetName = PathSet,
@@ -81,9 +82,11 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
     [Alias("sb")]
     public TSort SortBy { get; set; }
 
+    public virtual int Top { get; set; }
+
     protected override void BeginProcessing()
     {
-        if (Recurse && !MyInvocation.BoundParameters.ContainsKey(nameof(Depth)))
+        if (Recurse && !MyInvocation.Uses(nameof(Depth)))
             Depth = int.MaxValue;
 
         const WildcardOptions options = WildcardOptions.Compiled
@@ -96,8 +99,10 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
         if (Include is not null)
         {
             _includePatterns = [.. Include.Select(e => new WildcardPattern(e, options))];
-            WithInclude = true;
+            HasInclude = true;
         }
+
+        _comparer = GetComparer();
     }
 
     protected IEnumerable<(ProviderInfo, string)> EnumerateResolvedPaths()
@@ -107,7 +112,7 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
 
         foreach (string path in _paths ?? [SessionState.Path.CurrentLocation.Path])
         {
-            if (MyInvocation.BoundParameters.ContainsKey(nameof(LiteralPath)))
+            if (MyInvocation.Uses(nameof(LiteralPath)))
             {
                 string resolved = SessionState.Path.GetUnresolvedProviderPathFromPSPath(
                     path: path,
@@ -136,7 +141,6 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
     protected void ProcessTree(TContainer container)
     {
         int depth, maxdp = 0;
-        CurrentSource = container.Source;
         Push(container);
 
         while (!_canceled && _stack.Count > 0)
@@ -147,11 +151,10 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
             BuildOne(current, depth);
         }
 
-        IComparer<TBase>? comparer = GetComparer();
-        if (WithInclude) container.PruneNonIncluded();
+        container.Consolidate(_comparer, Top, HasInclude);
 
         WriteObject(
-            container.Render(maxdp, comparer),
+            container.Render(maxdp),
             enumerateCollection: true);
     }
 
@@ -174,8 +177,12 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
         return false;
     }
 
-    protected bool ShouldInclude(string item) =>
-        !WithInclude || MatchAny(item, _includePatterns!);
+    protected bool ShouldInclude(string item)
+    {
+        if (!HasInclude) return true;
+        Poly.Assert(_includePatterns is not null);
+        return MatchAny(item, _includePatterns);
+    }
 
     protected bool ShouldExclude(string item) =>
         _excludePatterns is not null && MatchAny(item, _excludePatterns);

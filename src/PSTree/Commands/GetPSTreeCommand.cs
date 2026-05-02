@@ -10,7 +10,7 @@ using PSTree.Nodes;
 namespace PSTree.Commands;
 
 [Cmdlet(VerbsCommon.Get, "PSTree", DefaultParameterSetName = PathSet)]
-[OutputType(typeof(TreeDirectory), typeof(TreeFile))]
+[OutputType(typeof(TreeDirectory), typeof(TreeFile), typeof(TreeSummary))]
 [Alias("pstree")]
 public sealed class GetPSTreeCommand
     : TreeCommandBase<TreeDirectory, TreeFileSystemInfo, FileSystemSortMode>
@@ -26,6 +26,36 @@ public sealed class GetPSTreeCommand
     [Parameter]
     [Alias("rs")]
     public SwitchParameter RecursiveSize { get; set; }
+
+    [Parameter]
+    [Alias("t")]
+    [ValidateRange(1, int.MaxValue)]
+    public override int Top { get; set; }
+
+    protected override void BeginProcessing()
+    {
+        if (MyInvocation.Uses(nameof(Top)))
+        {
+            (bool IsBound, bool IsValid) = CheckSortMode();
+
+            if (!IsValid) this.ThrowIncompatibleSortError();
+
+            RecursiveSize = true;
+            if (!IsBound) SortBy = FileSystemSortMode.Size;
+        }
+
+        base.BeginProcessing();
+    }
+
+    private (bool IsBound, bool IsValid) CheckSortMode()
+    {
+        bool bound = MyInvocation.Uses(nameof(SortBy));
+        bool valid = !bound || SortBy
+            is FileSystemSortMode.Size
+            or FileSystemSortMode.DirectoriesFirstBySize;
+
+        return (bound, valid);
+    }
 
     protected override void ProcessRecord()
     {
@@ -50,7 +80,7 @@ public sealed class GetPSTreeCommand
 
             if (!System.IO.Directory.Exists(path))
             {
-                WriteError(path.ToInvalidPathError());
+                this.WriteInvalidPathError(path);
                 continue;
             }
 
@@ -64,6 +94,7 @@ public sealed class GetPSTreeCommand
         bool showThisLevel = depth <= Depth;
         bool shouldTraverse = showThisLevel || RecursiveSize;
         bool hasFile = false;
+        string source = current.Source;
 
         try
         {
@@ -74,7 +105,7 @@ public sealed class GetPSTreeCommand
 
                 if (item is DirectoryInfo dir)
                 {
-                    TreeDirectory treedir = current.CreateDirectory(dir, CurrentSource);
+                    TreeDirectory treedir = current.CreateDirectory(dir, source);
 
                     if (showThisLevel)
                         current.AddChild(treedir);
@@ -95,14 +126,14 @@ public sealed class GetPSTreeCommand
                     continue;
 
                 hasFile = true;
-                TreeFile treefile = current.CreateFile(file, CurrentSource);
+                TreeFile treefile = current.CreateFile(file, source);
                 current.AddChild(treefile);
             }
 
             current.AggregateUp(
                 accumulatedLength,
                 RecursiveSize,
-                WithInclude && hasFile);
+                HasInclude && hasFile);
         }
         catch (Exception exception)
         {

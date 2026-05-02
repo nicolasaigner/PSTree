@@ -29,10 +29,21 @@ internal static class ExceptionExtensions
             => new(exception, "EnumerationFailure", ErrorCategory.NotSpecified, item);
     }
 
-    internal static ErrorRecord ToInvalidPathError(this string path)
+    extension(PSCmdlet cmdlet)
     {
-        ItemNotFoundException exception = new($"Cannot find path '{path}' because it does not exist.");
-        return new(exception,"InvalidPath", ErrorCategory.InvalidArgument, path);
+        internal void WriteInvalidPathError(string path)
+        {
+            ItemNotFoundException ex = new($"Cannot find path '{path}' because it does not exist.");
+            ErrorRecord error = new(ex, "InvalidPath", ErrorCategory.InvalidArgument, path);
+            cmdlet.WriteError(error);
+        }
+
+        internal void ThrowIncompatibleSortError()
+        {
+            InvalidOperationException ex = new("The -Top parameter requires a size-based sort mode (Size or DirectoriesFirstBySize).");
+            ErrorRecord error = new(ex, "InvalidSortForTop", ErrorCategory.InvalidArgument, null);
+            cmdlet.ThrowTerminatingError(error);
+        }
     }
 
     internal static void ThrowInvalidSequence(this string vt)
