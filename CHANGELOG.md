@@ -25,7 +25,7 @@
   - New `RenderingStyle` property on `TreeStyle`.
   - Supported styles: `Fancy` (default), `FancyRounded`, `Classic`, `ClassicRounded`.
 
-- Added `SummaryStyle` property to `TreeStyle.FileSystemStyle` for customizing the appearance of `TreeSummary` objects.
+- Added `Summary` property to `TreeStyle.FileSystemStyle` for customizing the appearance of `TreeSummary` objects.
 - Improved tree rendering logic with `RenderingSet` struct for better control over box-drawing characters.
 
 ### Changed
