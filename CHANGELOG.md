@@ -2,11 +2,53 @@
 
 ## v3.0.0
 
-- Refactored namespace structure: Moved all tree node classes from the `PSTree` namespace to `PSTree.Nodes`:
-  - `TreeBase`, `TreeDirectory`, `TreeFile`, `TreeFileSystemInfo`, `TreeFileSystemInfo<T>`, `TreeRegistryBase`, `TreeRegistryKey`, and `TreeRegistryValue`.
-- Registry values now include the value name in the `Path` property using colon (`:`) separator:
-  - Keys: `HKEY_CURRENT_USER\Environment`
-  - Values: `HKEY_CURRENT_USER\Environment:TEMP`
+### Major Changes
+
+- **Major internal refactoring** of the tree node model for better performance, maintainability, and extensibility.
+- Moved all tree node classes from the `PSTree` namespace to the new `PSTree.Nodes` namespace.
+- Made `Get-PSTreeRegistry` **Windows-only** (cmdlet and alias `pstreereg` are no longer available on non-Windows platforms).
+- Significantly improved memory usage and rendering performance.
+
+### New Features
+
+- **Added `-SortBy` parameter** (alias `-sb`) to both `Get-PSTree` and `Get-PSTreeRegistry`.
+  - New `FileSystemSortMode` and `RegistrySortMode` enums with multiple sorting strategies (including size-based sorting).
+  - Added `TreeComparerFactory` and centralized comparison logic.
+
+- **Added `-Top` parameter** (alias `-t`) to `Get-PSTree`.
+  - Limits the number of children displayed per directory.
+  - Automatically enables `-RecursiveSize` and defaults to size-based sorting.
+  - Throws a clear error if used with incompatible sort modes.
+  - Introduces `TreeSummary` nodes to represent truncated items.
+
+- **Added customizable tree rendering styles**:
+  - New `RenderingStyle` property on `TreeStyle`.
+  - Supported styles: `Fancy` (default), `FancyRounded`, `Classic`, `ClassicRounded`.
+
+- Added `SummaryStyle` property to `TreeStyle.FileSystemStyle` for customizing the appearance of `TreeSummary` objects.
+- Improved tree rendering logic with `RenderingSet` struct for better control over box-drawing characters.
+
+### Changed
+
+- Refactored tree processing to separate **Data Shaping** (sorting, pruning, truncation) from rendering, improving consistency and performance.
+- `TreeBase` is now a true tree structure with parent references and child collections.
+- **Registry values now properly populate the `Path` property** (previously empty for `TreeRegistryValue` objects). The path now uses backslash (`\`) separator for both keys and values.
+- Improved rendering logic to reduce string allocations (~20% reduction in memory consumption).
+- Updated and significantly expanded documentation for `Get-PSTree` (especially `-Top`, `TreeSummary`, and sorting).
+- Updated `about_TreeStyle.md` with new rendering style options.
+
+### Breaking Changes
+
+- Namespace change: All tree node types moved from `PSTree.*` to `PSTree.Nodes.*`.  
+  **Update your scripts** if you were directly referencing node types.
+- `Get-PSTreeRegistry` is no longer available on non-Windows platforms.
+- Registry value `Path` property behavior changed (now correctly populated).
+
+### Documentation
+
+- Expanded cmdlet help for `Get-PSTree` with detailed `-Top` parameter documentation and examples.
+- Added usage examples for `-SortBy` and `-Top` in README.md.
+- Updated `about_TreeStyle.md`.
 
 ## v2.2.8
 
@@ -14,8 +56,8 @@
 
 ## v2.2.7
 
-- __Ctrl+C Cancellation__: Added support for gracefully canceling operations using <kbd>Ctrl+C</kbd> when the cmdlets are traversing a hierarchy. Previously, the only way to stop the process was by restarting the session.
-- __Sort Order for Registry Keys__: Similar to issue #9 but for the `Get-PSTreeRegistry` cmdlet. It now sorts Registry Keys in ascending order.
+- **Ctrl+C Cancellation**: Added support for gracefully canceling operations using <kbd>Ctrl+C</kbd> when the cmdlets are traversing a hierarchy. Previously, the only way to stop the process was by restarting the session.
+- **Sort Order for Registry Keys**: Similar to issue #9 but for the `Get-PSTreeRegistry` cmdlet. It now sorts Registry Keys in ascending order.
 
 ## v2.2.6
 
@@ -128,7 +170,7 @@ Before, the cmdlet would display sub-trees where no file was matched by the incl
 
 - Makes `Depth` property public for `PSTreeFileSystemInfo` instances.
 - Makes `GetParents()` method private, absolutely no reason to have it public.
-- Added properties `ItemCount` and `TotalItemCount` to `PSTreeDirectory` instances, requested in [__Issue #34__][21].
+- Added properties `ItemCount` and `TotalItemCount` to `PSTreeDirectory` instances, requested in [**Issue #34**][21].
 
   ```powershell
   PS \> pstree -Recurse -Force -Directory | Select-Object Hierarchy, Depth, ItemCount, TotalItemCount -First 15
@@ -165,7 +207,7 @@ Before, the cmdlet would display sub-trees where no file was matched by the incl
 ## v2.1.17
 
 - Added method `.GetUnderlyingObject()`. Outputs the underlying `FileSystemInfo` instance.
-- Fixes [__Issue #9: Sort by ascending values__][1]:
+- Fixes [**Issue #9: Sort by ascending values**][1]:
   - PSTree v2.1.16
 
     ```powershell
@@ -312,9 +354,9 @@ Before, the cmdlet would display sub-trees where no file was matched by the incl
 
 ## v2.1.9
 
-- __PSTree Module__ is now published to the [PowerShell Gallery][20]!
-- Introducing `-RecursiveSize` switch parameter to `Get-PSTree`. By default, `Get-PSTree` only displays the size of folders __based on the sum of the files length in each Directory__.
-This parameter allows to calculate the recursive size of folders in the hierarchy, similar to how explorer does it. __It's important to note that this is a more expensive operation__, in order to calculate the recursive size, all folders in the hierarchy need to be traversed.
+- **PSTree Module** is now published to the [PowerShell Gallery][20]!
+- Introducing `-RecursiveSize` switch parameter to `Get-PSTree`. By default, `Get-PSTree` only displays the size of folders **based on the sum of the files length in each Directory**.
+This parameter allows to calculate the recursive size of folders in the hierarchy, similar to how explorer does it. **It's important to note that this is a more expensive operation**, in order to calculate the recursive size, all folders in the hierarchy need to be traversed.
 
 ```powershell
 PS \> pstree -Directory -Depth 2
@@ -371,9 +413,9 @@ d----     └── Format                     1.83 Kb
 
 - Lots of code improvements have been done to the Module and improved error handling. Now uses the [`GetDirectories()`][10] and [`GetFiles()`][9] methods from [`System.IO.DirectoryInfo`][8]. Each `PSTreeDirectory` instance now holds an instance of `DirectoryInfo`. [`System.Collections.Stack`][5] has been changed for [`System.Collections.Generic.Stack<T>`][7].
 
-- __PSTree Module__ now uses [`System.Collections.Stack`][5] instead of recursion, performance should be much better now and functionality remains the same. Special thanks to [IISResetMe][6].
+- **PSTree Module** now uses [`System.Collections.Stack`][5] instead of recursion, performance should be much better now and functionality remains the same. Special thanks to [IISResetMe][6].
 
-- __PSTree Module__ now has it's own classes, functionality remains the same however a lot has been improved.
+- **PSTree Module** now has it's own classes, functionality remains the same however a lot has been improved.
 - Recursion is now done using the static methods [`[System.IO.Directory]::GetDirectories()`][2] and [`[System.IO.Directory]::GetFiles()`][3] instead of [`Get-ChildItem`][4].
 
 - `-Files` switch has been added to the Module, now you can display files in the hierarchy tree if desired.
