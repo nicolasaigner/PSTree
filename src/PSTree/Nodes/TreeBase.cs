@@ -82,11 +82,9 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
             builder.SetStyledName(current);
             yield return current;
 
-            if (current.Children is not { Count: > 0 } children)
-                continue;
-
-            for (int i = children.Count - 1; i >= 0; i--)
-                stack.Push(children[i]);
+            if (current.Children is { Count: > 0 } children)
+                for (int i = children.Count - 1; i >= 0; i--)
+                    stack.Push(children[i]);
         }
     }
 

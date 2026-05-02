@@ -10,7 +10,7 @@ using PSTree.Nodes;
 namespace PSTree.Commands;
 
 [Cmdlet(VerbsCommon.Get, "PSTree", DefaultParameterSetName = PathSet)]
-[OutputType(typeof(TreeDirectory), typeof(TreeFile))]
+[OutputType(typeof(TreeDirectory), typeof(TreeFile), typeof(TreeSummary))]
 [Alias("pstree")]
 public sealed class GetPSTreeCommand
     : TreeCommandBase<TreeDirectory, TreeFileSystemInfo, FileSystemSortMode>

@@ -8,14 +8,14 @@ public sealed class TreeSummary : TreeFileSystemInfo
 
     internal override bool IsContainer { get; } = false;
 
-    internal TreeSummary(TreeDirectory parent, int dirCount, int fileCount)
+    internal TreeSummary(TreeDirectory parent, int dCount, int fCount)
         : base(parent.Source, parent.Depth + 1)
     {
         Container = parent;
-        Name = GetName(dirCount, fileCount);
+        Name = GetName(dCount, fCount);
     }
 
-    private static string GetName(int dirCount, int fileCount)
+    private static string GetName(int dCount, int fCount)
     {
         const string d = "folder";
         const string f = "file";
@@ -23,11 +23,11 @@ public sealed class TreeSummary : TreeFileSystemInfo
         static string Label(int count, string noun)
             => count == 1 ? $"{count} {noun}" : $"{count} {noun}s";
 
-        return (dirCount, fileCount) switch
+        return (dCount, fCount) switch
         {
-            ( > 0, > 0) => $"[+{Label(dirCount, d)}, +{Label(fileCount, f)}]",
-            ( > 0,   0) => $"[+{Label(dirCount, d)}]",
-            _           => $"[+{Label(fileCount, f)}]"
+            ( > 0, > 0) => $"[+{Label(dCount, d)}, +{Label(fCount, f)}]",
+            ( > 0,   0) => $"[+{Label(dCount, d)}]",
+            _           => $"[+{Label(fCount, f)}]"
         };
     }
 }
