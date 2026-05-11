@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Management.Automation;
 using System.Text;
+using System.Threading;
 using PSTree.CodeAnalysis;
 using PSTree.Extensions;
 using PSTree.Interfaces;
@@ -55,7 +57,7 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
 #endif
     }
 
-    internal IEnumerable<ITree> Render(int maxDepth)
+    internal void Render(PSCmdlet cmdlet, int maxDepth)
     {
         RenderingSet set = TreeStyle.Instance.RenderingSet;
         bool[] continues = new bool[maxDepth + 1];
@@ -80,7 +82,7 @@ public abstract class TreeBase<TContainer, TBase>(string source, int depth = 0) 
             }
 
             builder.SetStyledName(current);
-            yield return current;
+            cmdlet.WriteObject(current);
 
             if (current.Children is { Count: > 0 } children)
                 for (int i = children.Count - 1; i >= 0; i--)

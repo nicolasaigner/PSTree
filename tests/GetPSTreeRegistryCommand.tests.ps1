@@ -55,7 +55,7 @@ Describe 'Get-PSTreeRegistry.Windows' {
             { Get-PSTreeRegistry -Path HKLM:\ } |
                 Should -Throw -ExceptionType ([SecurityException])
 
-            { Get-PSTreeRegistry HKLM:\SECURITY } |
+            { Get-PSTreeRegistry -LiteralPath HKLM:\SECURITY } |
                 Should -Throw -ExceptionType ([SecurityException])
         }
 

@@ -152,10 +152,7 @@ public abstract class TreeCommandBase<TContainer, TBase, TSort> : PSCmdlet
         }
 
         container.Consolidate(_comparer, Top, HasInclude);
-
-        WriteObject(
-            container.Render(maxdp),
-            enumerateCollection: true);
+        container.Render(this, maxdp);
     }
 
     protected abstract void BuildOne(TContainer current, int depth);
