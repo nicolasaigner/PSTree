@@ -84,24 +84,19 @@ public sealed class GetPSTreeRegistryCommand
     private bool TryGetKey(string path, [NotNullWhen(true)] out RegistryKey? key)
     {
         (string baseKey, string? subKey) = path.Split(['\\'], 2);
-        key = default;
+        key = RegistryMappings.Get(baseKey);
+        if (string.IsNullOrWhiteSpace(subKey)) return true;
 
         try
         {
-            if (RegistryMappings.TryGetKey(baseKey, out key))
-            {
-                if (string.IsNullOrWhiteSpace(subKey))
-                    return true;
-
-                key = key.OpenSubKey(subKey);
-                if (key is not null) return true;
-
-                this.WriteInvalidPathError(path);
-            }
+            key = key.OpenSubKey(subKey);
+            if (key is not null) return true;
+            this.WriteInvalidPathError(path);
         }
         catch (SecurityException exception)
         {
             WriteError(exception.ToSecurityError(path));
+            key = null;
         }
 
         return false;

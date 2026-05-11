@@ -18,7 +18,6 @@ internal static class RegistryMappings
         ["HKEY_CURRENT_CONFIG"] = Win32Registry.CurrentConfig
     };
 
-    internal static bool TryGetKey(string key, [NotNullWhen(true)] out RegistryKey? value)
-        => s_map.TryGetValue(key, out value);
+    internal static RegistryKey Get(string key) => s_map[key];
 }
 #endif
