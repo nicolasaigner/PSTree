@@ -24,7 +24,7 @@ public static class _FormattingInternals
     ];
 
     [Hidden, EditorBrowsable(EditorBrowsableState.Never)]
-    public static string GetSource(ITree item) => item.Source;
+    public static string GetSource(ITree item) => item.Source.Replace(@"D:\Zen\Documents\Scripts", "..");
 
     [Hidden, EditorBrowsable(EditorBrowsableState.Never)]
     public static string GetFormattedLength(long length)

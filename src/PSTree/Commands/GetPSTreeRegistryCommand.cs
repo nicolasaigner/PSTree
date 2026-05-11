@@ -86,30 +86,25 @@ public sealed class GetPSTreeRegistryCommand
         (string baseKey, string? subKey) = path.Split(['\\'], 2);
         key = default;
 
-        if (!RegistryMappings.TryGetKey(baseKey, out RegistryKey? value))
-            return false;
-
-        if (!string.IsNullOrWhiteSpace(subKey))
+        try
         {
-            try
+            if (RegistryMappings.TryGetKey(baseKey, out key))
             {
-                if ((key = value.OpenSubKey(subKey)) is null)
-                {
-                    this.WriteInvalidPathError(path);
-                    return false;
-                }
-            }
-            catch (SecurityException exception)
-            {
-                WriteError(exception.ToSecurityError(path));
-                return false;
-            }
+                if (string.IsNullOrWhiteSpace(subKey))
+                    return true;
 
-            return true;
+                key = key.OpenSubKey(subKey);
+                if (key is not null) return true;
+
+                this.WriteInvalidPathError(path);
+            }
+        }
+        catch (SecurityException exception)
+        {
+            WriteError(exception.ToSecurityError(path));
         }
 
-        key = value;
-        return true;
+        return false;
     }
 
     protected override IComparer<TreeRegistryBase>? GetComparer()
