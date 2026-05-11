@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v3.0.1
+
+### Fixed
+
+- Fixed non-streaming output caused by `WriteObject(..., enumerateCollection: true)`.
+- `TreeBase.Render()` now accepts `PSCmdlet` as a parameter and writes objects directly, enabling proper PowerShell streaming behavior.
+- Simplified `RegistryMappings` API (`TryGetKey` → `Get`) since only the five standard registry hives are supported.
+- Improved `TryGetKey` logic in `GetPSTreeRegistryCommand` for better readability and error handling.
+
+### Changed
+
+- Minor internal cleanups and code style improvements.
+
 ## v3.0.0
 
 ### Major Changes
