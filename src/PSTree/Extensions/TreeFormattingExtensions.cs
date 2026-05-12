@@ -6,7 +6,7 @@ using PSTree.Style;
 
 namespace PSTree.Extensions;
 
-internal static class TreeFormattingExtension
+internal static class TreeFormattingExtensions
 {
     private const string Reset = "\x1B[0m";
 
